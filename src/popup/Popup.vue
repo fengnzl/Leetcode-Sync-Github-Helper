@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import { storageDemo } from '~/logic/storage'
-
-function openOptionsPage() {
-  browser.runtime.openOptionsPage()
-}
+import { leetcodeSyncToken } from '~/logic/storage'
+import { getAuthToken } from '~/logic/oauth2'
+const showAuthenticate = computed(() => !leetcodeSyncToken.value)
 </script>
 
 <template>
   <main class="w-[300px] px-4 py-5 text-center text-gray-700">
     <Logo />
-    <div>Popup</div>
-    <p class="mt-2 opacity-50">
-      This is the popup page
-    </p>
-    <button class="btn mt-2" @click="openOptionsPage">
-      Open Options
-    </button>
-    <div class="mt-2">
-      <span class="opacity-50">Storage:</span> {{ storageDemo }}
-    </div>
+    <h2 class="to-light-600 font-700 text-size-16px">
+      Leetcode Sync GitHub Helper
+    </h2>
+    <template v-if="showAuthenticate">
+      Authenticate with GitHub to use extension!
+      <button class="btn mt-2" @click="getAuthToken">
+        Authenticate
+      </button>
+    </template>
   </main>
 </template>

@@ -13,6 +13,7 @@ export async function getManifest() {
     name: pkg.displayName || pkg.name,
     version: pkg.version,
     description: pkg.description,
+    homepage_url: pkg.homepage,
     action: {
       default_icon: './assets/icon.png',
       default_popup: './dist/popup/index.html',
@@ -33,12 +34,14 @@ export async function getManifest() {
     host_permissions: ['*://*/*'],
     content_scripts: [
       {
-        matches: [
-          'https://leetcode.com/*',
-          'https://github.com/*',
-          'https://leetcode.cn/*',
-        ],
+        matches: ['https://leetcode.com/*', 'https://leetcode.cn/*'],
         js: ['./dist/contentScripts/index.global.js'],
+        run_at: 'document_idle',
+      },
+      {
+        matches: ['https://github.com/*'],
+        js: ['./dist/contentScripts/authorize.mjs'],
+        run_at: 'document_idle',
       },
     ],
     web_accessible_resources: [

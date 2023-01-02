@@ -10,6 +10,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { isDev, port, r } from './scripts/utils'
 import { MV3Hmr } from './vite-mv3-hmr'
 
@@ -27,9 +28,7 @@ export const sharedConfig: UserConfig = {
       imports: [
         'vue',
         {
-          'webextension-polyfill': [
-            ['*', 'browser'],
-          ],
+          'webextension-polyfill': [['*', 'browser']],
         },
       ],
       dts: r('src/auto-imports.d.ts'),
@@ -41,6 +40,7 @@ export const sharedConfig: UserConfig = {
       // generate `components.d.ts` for ts support with Volar
       dts: r('src/components.d.ts'),
       resolvers: [
+        ElementPlusResolver(),
         // auto import icons
         IconsResolver({
           componentPrefix: '',
@@ -55,8 +55,11 @@ export const sharedConfig: UserConfig = {
     UnoCSS(),
 
     replace({
+      'preventAssignment': true,
       '__DEV__': JSON.stringify(isDev),
-      'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production'),
+      'process.env.NODE_ENV': JSON.stringify(
+        isDev ? 'development' : 'production',
+      ),
       '__VUE_OPTIONS_API__': JSON.stringify(true),
       '__VUE_PROD_DEVTOOLS__': JSON.stringify(false),
     }),
@@ -67,19 +70,16 @@ export const sharedConfig: UserConfig = {
       enforce: 'post',
       apply: 'build',
       transformIndexHtml(html, { path }) {
-        return html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets')}/`)
+        return html.replace(
+          /"\/assets\//g,
+          `"${relative(dirname(path), '/assets')}/`,
+        )
       },
     },
   ],
   optimizeDeps: {
-    include: [
-      'vue',
-      '@vueuse/core',
-      'webextension-polyfill',
-    ],
-    exclude: [
-      'vue-demi',
-    ],
+    include: ['vue', '@vueuse/core', 'webextension-polyfill'],
+    exclude: ['vue-demi'],
   },
 }
 
