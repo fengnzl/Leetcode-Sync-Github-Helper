@@ -30,7 +30,7 @@ export async function getManifest() {
       48: './assets/icon.png',
       128: './assets/icon.png',
     },
-    permissions: ['tabs', 'storage', 'activeTab'],
+    permissions: ['tabs', 'storage', 'activeTab', 'notifications'],
     host_permissions: ['*://*/*'],
     content_scripts: [
       {

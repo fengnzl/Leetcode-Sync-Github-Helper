@@ -2,18 +2,20 @@ import { sendMessage } from 'webext-bridge'
 import { watch } from 'vue'
 import { generateToken } from '../logic/storage'
 import { useUserInfo } from '../composables/useUserInfo'
-import { removeCurrentTab } from '../logic/tabs'
+import { removeActiveCurrentTab } from '../logic/tabs'
 import { TOKEN_MESSAGE_ID } from '~/config'
 import { getAccesToken } from '~/composables/useAccessToken'
 
 function getGitHubAuthToken() {
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
-  if (!code)
-    removeCurrentTab()
-
-  else
-    getToken(code)
+  if (!code) {
+    generateToken.value = false
+    removeActiveCurrentTab()
+  }
+  else {
+    getToken(code!)
+  }
 }
 
 async function getToken(code: string) {
@@ -37,8 +39,6 @@ async function getToken(code: string) {
     }
   }
   if (!isSuccessToken) {
-    // eslint-disable-next-line no-console
-    console.log('afs')
     sendMessage(
       TOKEN_MESSAGE_ID,
       {

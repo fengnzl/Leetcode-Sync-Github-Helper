@@ -10,3 +10,11 @@ export interface IAccessTokenRes {
   scope: string
   token_type: string
 }
+
+export interface ITokenMessage {
+  isCloseCurrentTab: boolean
+  isSuccess: boolean
+  username?: string
+  tokenType?: string
+  token?: string
+}
