@@ -4,6 +4,6 @@ export const CLIENT_ID = '8526533d50a84a334c7d'
 export const KEY = 'leetcode-aync-helper'
 export const AUTHORIZATION_URL = 'https://github.com/login/oauth/authorize'
 export const REDIRECT_URL = 'https://github.com/'
-export const SCOPES = ['read:user', 'write:repo_hook']
+export const SCOPES = ['repo']
 export const ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
 export const TOKEN_MESSAGE_ID = 'TOKEN_MESSAGE_ID'

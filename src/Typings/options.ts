@@ -1,4 +1,6 @@
 export enum PickOptions {
   none = '',
-  newPublic = 'public',
+  public = 'public',
+  private = 'private',
+  attach = 'attach',
 }

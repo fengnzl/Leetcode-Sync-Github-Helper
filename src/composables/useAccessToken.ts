@@ -19,6 +19,6 @@ export async function getAccesToken<T = IAccessTokenRes>(code: string): Promise<
       }
     },
   }
-  return usePost<T>(ACCESS_TOKEN_URL, config).post(payload).json()
+  return usePost<T>(ACCESS_TOKEN_URL, payload, config)
 }
 

@@ -16,7 +16,7 @@ const useMyFetch = createFetch({
       options.headers = {
         ...options.headers,
         Authorization: `${tokenType} ${token}`,
-        Accept: 'application/json',
+        Accept: 'application/json; application/vnd.github+json',
       }
 
       return { options }

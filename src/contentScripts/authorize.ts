@@ -5,7 +5,6 @@ import { useUserInfo } from '../composables/useUserInfo'
 import { removeActiveCurrentTab } from '../logic/tabs'
 import { TOKEN_MESSAGE_ID } from '~/config'
 import { getAccesToken } from '~/composables/useAccessToken'
-
 function getGitHubAuthToken() {
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
