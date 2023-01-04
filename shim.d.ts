@@ -1,5 +1,5 @@
 import type { ProtocolWithReturn } from 'webext-bridge'
-import type { ITokenMessage } from './src/Typings'
+import type { ITokenMessage } from './src/Types'
 import { TOKEN_MESSAGE_ID } from './src/config/oauth2';
 
 declare module 'webext-bridge' {

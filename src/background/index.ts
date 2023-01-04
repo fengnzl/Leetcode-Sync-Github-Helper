@@ -3,7 +3,7 @@ import { notifications, runtime, tabs } from 'webextension-polyfill'
 import { TOKEN_MESSAGE_ID } from '../config/oauth2'
 import { removeActiveCurrentTab } from '../logic/tabs'
 import IconPng from '../assets/icon.png'
-import type { ITokenMessage } from '../Typings/token'
+import type { ITokenMessage } from '../Types/token'
 import { generateToken, leetcodeSyncToken, leetcodeSyncTokenType } from '../logic/storage'
 import { gihubUserNameStorage } from '~/logic/storage'
 

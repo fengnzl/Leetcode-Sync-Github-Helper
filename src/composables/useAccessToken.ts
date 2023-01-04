@@ -1,5 +1,5 @@
 import type { UseFetchOptions, UseFetchReturn } from '@vueuse/core'
-import type { IAccessTokenPayload, IAccessTokenRes } from '../Typings/token'
+import type { IAccessTokenPayload, IAccessTokenRes } from '../Types/token'
 import { usePost } from './useMyFetch'
 import { ACCESS_TOKEN_URL, CLIENT_ID, CLIENT_SECRET } from '~/config'
 
