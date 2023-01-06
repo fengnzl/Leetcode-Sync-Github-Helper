@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import 'uno.css'
 import { gihubUserNameStorage, githubRepoNameStorage, leetcodeSyncToken } from '../logic/storage'
 import { useCreateRepository } from '~/composables/useCreateRepository'
 import { PickOptions } from '~/Types/options'
@@ -82,9 +83,8 @@ const hasAttatched = computed(() => !!githubRepoNameStorage.value)
     <div v-else>
       <ProblemSolved count-size="24px" title-size="30px" />
     </div>
-
-    <div class="mb-4 text-center" style="position: fixed;">
-      Powered by Vite <pixelarticons-zap class="align-middle inline-block" />
-    </div>
   </main>
+  <div class="mb-4 text-center fixed bottom-10px left-50% translate-x--50%">
+    Powered by Vite <pixelarticons-zap class="align-middle inline-block" />
+  </div>
 </template>

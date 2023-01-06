@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import 'uno.css'
 import { leetcodeSyncToken } from '~/logic/storage'
 import { getAuthToken } from '~/logic/oauth2'
 const showAuthenticate = computed(() => !leetcodeSyncToken.value)

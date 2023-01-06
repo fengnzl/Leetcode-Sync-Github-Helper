@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { leetcodeProblemSolved } from '../logic/storage'
+import 'uno.css'
 defineProps({
   titleSize: String,
   countSize: String,
