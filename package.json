@@ -32,7 +32,9 @@
     "@ffflorian/jszip-cli": "^3.1.6",
     "@iconify/json": "^2.1.119",
     "@rollup/plugin-replace": "^5.0.1",
+    "@types/chrome": "^0.0.206",
     "@types/fs-extra": "^9.0.13",
+    "@types/js-cookie": "^3.0.2",
     "@types/node": "^18.8.3",
     "@types/webextension-polyfill": "^0.9.1",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
@@ -66,6 +68,7 @@
     "webextension-polyfill": "^0.10.0"
   },
   "dependencies": {
-    "element-plus": "^2.2.28"
+    "element-plus": "^2.2.28",
+    "js-cookie": "^3.0.1"
   }
 }

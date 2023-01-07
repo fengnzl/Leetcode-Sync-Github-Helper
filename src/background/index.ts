@@ -41,4 +41,3 @@ function handleTokenSuccess(data: ITokenMessage) {
   const optionsPage = runtime.getURL('dist/options/index.html')
   tabs.create({ url: optionsPage, active: true })
 }
-

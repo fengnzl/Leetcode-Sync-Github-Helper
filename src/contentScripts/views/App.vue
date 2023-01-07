@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useToggle } from '@vueuse/core'
 import 'uno.css'
-import { getLeetcodeInfo } from '~/config/common'
+import { useSubmitStatus } from '~/composables/useSubmitStatus'
+import { getLeetcodeInfo } from '~/config/leetcode'
+import { useUploadToGit } from '~/composables/useUploadToGit'
 const { bottom, right } = getLeetcodeInfo()
 
 const innerHeight = window.innerHeight
@@ -9,14 +10,24 @@ const innerWidth = window.innerWidth
 const dragContentWidth = 40
 const dragContentHeight = 40
 
-const [show, toggle] = useToggle(false)
 const posBottom = ref(bottom)
 const posRight = ref(right)
 const handleDrop = (e: DragEvent) => {
   e.preventDefault()
-  posRight.value = innerWidth - e.clientX - dragContentWidth / 2
-  posBottom.value = innerHeight - e.clientY - dragContentHeight / 2
+  const right = innerWidth - e.clientX - dragContentWidth / 2
+  posRight.value = right > 0 ? right : 0
+  const bottom = innerHeight - e.clientY - dragContentHeight / 2
+  posBottom.value = bottom > 0 ? bottom : 0
 }
+
+// check whether click submit button
+const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
+const { uploadToGit } = useUploadToGit()
+watch(isSubmitFinished, (newVal: boolean) => {
+  if (newVal)
+    changeSubmitStatus(false)
+    // uploadToGit()
+})
 </script>
 
 <template>
@@ -31,7 +42,6 @@ const handleDrop = (e: DragEvent) => {
       p="x-4 y-2"
       m="y-auto r-2"
       transition="opacity duration-300"
-      :class="show ? 'opacity-100' : 'opacity-0'"
     >
       Vitesse WebExt
     </div>
@@ -39,7 +49,7 @@ const handleDrop = (e: DragEvent) => {
       class="flex h-40px rounded-full shadow cursor-pointer"
       bg="teal-600 hover:teal-700"
       :style="`width: ${dragContentWidth}px; height: ${dragContentHeight}px`"
-      @click="toggle()"
+      @click="uploadToGit()"
     >
       <pixelarticons-power class="block m-auto text-white text-lg" />
     </div>

@@ -5,19 +5,6 @@ export const REQUEST_BASE_URL = 'https://api.github.com'
 export const GITHUB_USER_NAME = 'GITHUB_USER_NAME'
 export const GITHUB_REPO_NAME = 'GITHUB_REPO_NAME'
 export const LEETCODE_PROBLEM_SOLVED = 'LEETCODE_PROBLEM_SOLVED'
-
-export function getLeetcodeInfo() {
-  const isLeetcodeCn = location.origin === 'leetcode.cn'
-  if (isLeetcodeCn) {
-    return {
-      bottom: 214,
-      right: 22,
-    }
-  }
-  else {
-    return {
-      bottom: 214,
-      right: 22,
-    }
-  }
-}
+export const LEETCODE_PROBLEM_SHA = 'LEETCODE_PROBLEM_SHA'
+export const LEETCODE_LEADING_COUNT = 4
+export const ENDNOTE = 'Leecode Sync Helper'

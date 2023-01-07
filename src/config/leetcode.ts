@@ -1,0 +1,103 @@
+import type { ILeetcodeInfo } from '~/Types/leetcode'
+
+export const SUBMISSION_DETAIL_PREFIX = '/submissions/detail/'
+export const LEETCODE_LANGUAGE = {
+  'python': '.py',
+  'python3': '.py',
+  'c++': '.cpp',
+  'c': '.c',
+  'java': '.java',
+  'c#': '.cs',
+  'javascript': 'js',
+  'ruby': '.rb',
+  'swift': '.swift',
+  'go': '.go',
+  'kotlin': '.kt',
+  'scala': '.scala',
+  'rust': '.rs',
+  'php': '.php',
+  'typescript': '.ts',
+  'mysql': '.sql',
+  'ms sql server': '.sql',
+  'oracle': '.sql',
+}
+const newRootSelectorId = '__next'
+const CN_LEETCODE_INFO: ILeetcodeInfo = {
+  bottom: 214,
+  right: 22,
+  oldTitleSelector: 'div[data-cy="question-title"]',
+  newTitleSelector: 'span[class*="text-label-1"]',
+  successSelector: '.success__3Ai7',
+  submitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  passStatusSelector: 'data__HC-i',
+  BASE_URL: 'https://leetcode.cn/graphql/',
+  rootSelectorId: 'app',
+  newRootSelectorId,
+  oldCodeSelector: '.custom-td__1SeH > .ac__g_mU',
+  newCodeSelector: 'code',
+  getProblemSolutionFn: getCnProblemSolution,
+  passOldTableTdClass: '.custom-td__1SeH',
+  passNewTableTdClass: 'span[class*=leading-]',
+}
+const EN_LEETCODE_INFO: ILeetcodeInfo = {
+  bottom: 214,
+  right: 22,
+  oldTitleSelector: 'div[data-cy="question-title"]',
+  newTitleSelector: 'span[class*="text-label-1"]',
+  successSelector: '.success__3Ai7',
+  submitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  passStatusSelector: 'data__HC-i',
+  BASE_URL: 'https://leetcode.com/graphql/',
+  rootSelectorId: 'app',
+  newRootSelectorId,
+  oldCodeSelector: '.status-column__3SUg > .ac__35gz',
+  newCodeSelector: 'code',
+  getProblemSolutionFn: getEnProblemSolution,
+  passOldTableTdClass: '.lang-column__tR-8',
+  passNewTableTdClass: 'span[class*=leading-]',
+}
+export function isLeetcodeCn() {
+  return location.hostname === 'leetcode.cn'
+}
+export function isNewUI() {
+  return !!document.getElementById(newRootSelectorId)
+}
+export function getLeetcodeInfo(): ILeetcodeInfo {
+  return isLeetcodeCn() ? CN_LEETCODE_INFO : EN_LEETCODE_INFO
+}
+
+// query problem info
+export function getProblemInfoQuery(titleSlug: string) {
+  return {
+    operationName: 'questionData',
+    variables: { titleSlug },
+    query:
+      'query questionData($titleSlug: String!) {\n  question(titleSlug: $titleSlug) {\n    questionId\n    title\n    titleSlug\n    content\n    translatedTitle\n    translatedContent\n    difficulty\n    }\n}\n',
+  }
+}
+
+// get solution
+export function getEnProblemSolution(submissionId: number) {
+  return {
+    query:
+      'query submissionDetails($submissionId: Int!) {submissionDetails(submissionId: $submissionId) {runtime\n    runtimeDisplay\n    runtimePercentile\n    memory\n    memoryDisplay\n    memoryPercentile\n   code\n    lang {\n      name\n      verboseName\n    }\n }\n}',
+    variables: { submissionId },
+  }
+}
+export function getCnProblemSolution(submissionId: number) {
+  return {
+    operationName: 'mySubmissionDetail',
+    variables: { id: submissionId },
+    query:
+      'query mySubmissionDetail($id: ID!) {\n  submissionDetail(submissionId: $id) {\n    id\n    code\n    runtime\n    memory\n  lang\n   rawMemory\n}\n}\n',
+  }
+}
+
+export function getProblemSubmissions(questionSlug: string) {
+  return {
+    operationName: 'submissions',
+    variables: { offset: 0, limit: 40, lastKey: null, questionSlug },
+    query:
+      'query submissions($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!, $markedOnly: Boolean, $lang: String) {\n  submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug, markedOnly: $markedOnly, lang: $lang) {\n    lastKey\n    hasNext\n    submissions {\n      id\n      statusDisplay\n      lang\n      runtime\n      timestamp\n      url\n      isPending\n      memory\n      submissionComment {\n        comment\n        flagType\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n',
+  }
+}

@@ -16,6 +16,3 @@ import App from './views/App.vue'
   document.body.appendChild(container)
   createApp(App).mount(root)
 })()
-
-// eslint-disable-next-line no-console
-console.log('hello from index')

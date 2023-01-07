@@ -3,12 +3,23 @@ import type { Manifest } from 'webextension-polyfill'
 import type PkgType from '../package.json'
 import { isDev, port, r } from '../scripts/utils'
 
+// https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/
+interface IRuleResourceType {
+  id: string
+  enabled: boolean
+  path: string
+}
+interface WebExtensionManifest extends Manifest.WebExtensionManifest {
+  declarative_net_request?: {
+    rule_resources: IRuleResourceType[]
+  }
+}
 export async function getManifest() {
   const pkg = (await fs.readJSON(r('package.json'))) as typeof PkgType
 
   // update this file to update this manifest.json
   // can also be conditional based on your need
-  const manifest: Manifest.WebExtensionManifest = {
+  const manifest: WebExtensionManifest = {
     manifest_version: 3,
     name: pkg.displayName || pkg.name,
     version: pkg.version,
@@ -30,7 +41,12 @@ export async function getManifest() {
       48: './assets/icon.png',
       128: './assets/icon.png',
     },
-    permissions: ['tabs', 'storage', 'activeTab', 'notifications'],
+    permissions: [
+      'tabs',
+      'storage',
+      'activeTab',
+      'notifications',
+    ],
     host_permissions: ['*://*/*'],
     content_scripts: [
       {
