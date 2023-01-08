@@ -1,7 +1,8 @@
 import type { Ref } from 'vue'
+import { isNewUI } from '../config/leetcode'
 import { getLeetcodeInfo } from '~/config/leetcode'
 
-const { submitBtnSelector, rootSelectorId, newRootSelectorId } = getLeetcodeInfo()
+const { oldSubmitBtnSelector, newSubmitBtnSelector, rootSelectorId, newRootSelectorId } = getLeetcodeInfo()
 export function useSubmitStatus() {
   // get submit button
   const submitBtnNode = ref<Element | null>(null)
@@ -31,25 +32,38 @@ export function useSubmitStatus() {
 }
 
 export function getSubmitBtnNode(targetNode: Ref<Element | null>) {
-  const app = document.getElementById(rootSelectorId) || document.getElementById(newRootSelectorId)
+  const isNew = isNewUI()
+  const rootSelector = isNew ? newRootSelectorId : rootSelectorId
+
+  const app
+    = document.getElementById(rootSelector)
   const mutationObserver = new MutationObserver(observeCb)
   const observeConfig: MutationObserverInit = {
     childList: true,
     subtree: true,
   }
   function observeCb() {
-    targetNode.value = document.querySelector<Element>(submitBtnSelector)
+    targetNode.value = getSubmitNode(isNew)
     if (targetNode.value)
       mutationObserver.disconnect()
   }
   mutationObserver.observe(app!, observeConfig)
 }
 
+function getSubmitNode(isNew: boolean): Element | null {
+  if (!isNew)
+    return document.querySelector<Element>(oldSubmitBtnSelector)
+  const buttons = document.querySelectorAll(newSubmitBtnSelector)
+  if (!buttons.length)
+    return null
+  return Array.from(buttons).find(item => item.textContent === 'Submit') || null
+}
+
 export function getSubmitStatus(
   submitBtn: Element,
   isSubmitFinished: Ref<boolean>,
 ) {
-  const targetNode = submitBtn.querySelector('span')!
+  const targetNode = isNewUI() ? submitBtn : submitBtn.querySelector('span')!
   const mutationObserver = new MutationObserver(observeCb)
   const observeConfig: MutationObserverInit = {
     attributes: true,

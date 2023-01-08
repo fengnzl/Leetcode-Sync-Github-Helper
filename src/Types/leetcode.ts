@@ -10,8 +10,10 @@ export interface ILeetcodeInfo {
   right: number
   oldTitleSelector: string
   newTitleSelector: string
-  successSelector: string
-  submitBtnSelector: string
+  oldSuccessSelector: string
+  newSuccessSelector: string
+  oldSubmitBtnSelector: string
+  newSubmitBtnSelector: string
   passStatusSelector: string
   BASE_URL: string
   rootSelectorId: 'app'
@@ -23,12 +25,6 @@ export interface ILeetcodeInfo {
   passNewTableTdClass: string
 }
 
-export interface IProblemShaValue {
-  readme: boolean
-  code: boolean
-  note: boolean
-}
-
 export interface IPostConig<T> {
   url?: string
   payload?: T
@@ -38,6 +34,7 @@ export interface IQuestionTitle {
   questionNum: string
   questionTitle: string
   enQuestionTitle: string
+  fullTitle: string
 }
 
 export interface IProblemInfoRes {
@@ -65,10 +62,10 @@ export interface IProblemEnSolutionRes {
       }
       memory: number
       memoryDisplay: string
-      memoryPercentile: string
+      memoryPercentile: number
       runtime: number
       runtimeDisplay: string
-      runtimePercentile: string
+      runtimePercentile: number
       [key: string]: any
     }
   }
@@ -77,13 +74,26 @@ export interface IProblemEnSolutionRes {
 export interface IProblemCnSolutionRes {
   data: {
     submissionDetail: {
-      id: string
       code: string
       lang: string
       runtime: string
       memory: string
       rawMemory: string
+      langVerboseName: string
+      memoryDisplay: string
+      memoryPercentile: number
+      runtimeDisplay: string
+      runtimePercentile: number
       [key: string]: any
     }
   }
+}
+
+export interface ISolutionInfo {
+  code: string
+  lang: string
+  memoryDisplay: string
+  memoryPercentile: number
+  runtimeDisplay: string
+  runtimePercentile: number
 }

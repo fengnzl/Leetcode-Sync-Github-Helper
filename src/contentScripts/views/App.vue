@@ -24,9 +24,10 @@ const handleDrop = (e: DragEvent) => {
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
 const { uploadToGit } = useUploadToGit()
 watch(isSubmitFinished, (newVal: boolean) => {
-  if (newVal)
+  if (newVal) {
     changeSubmitStatus(false)
-    // uploadToGit()
+    uploadToGit()
+  }
 })
 </script>
 

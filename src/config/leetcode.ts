@@ -27,8 +27,10 @@ const CN_LEETCODE_INFO: ILeetcodeInfo = {
   right: 22,
   oldTitleSelector: 'div[data-cy="question-title"]',
   newTitleSelector: 'span[class*="text-label-1"]',
-  successSelector: '.success__3Ai7',
-  submitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  oldSuccessSelector: '.success__3Ai7',
+  newSuccessSelector: '.text-green-s',
+  oldSubmitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  newSubmitBtnSelector: 'button[class*="text-label-"]',
   passStatusSelector: 'data__HC-i',
   BASE_URL: 'https://leetcode.cn/graphql/',
   rootSelectorId: 'app',
@@ -44,8 +46,10 @@ const EN_LEETCODE_INFO: ILeetcodeInfo = {
   right: 22,
   oldTitleSelector: 'div[data-cy="question-title"]',
   newTitleSelector: 'span[class*="text-label-1"]',
-  successSelector: '.success__3Ai7',
-  submitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  oldSuccessSelector: '.success__3Ai7',
+  newSuccessSelector: '.text-green-s',
+  oldSubmitBtnSelector: 'button[data-cy="submit-code-btn"]',
+  newSubmitBtnSelector: 'button[class*="text-label-"]',
   passStatusSelector: 'data__HC-i',
   BASE_URL: 'https://leetcode.com/graphql/',
   rootSelectorId: 'app',
@@ -86,10 +90,9 @@ export function getEnProblemSolution(submissionId: number) {
 }
 export function getCnProblemSolution(submissionId: number) {
   return {
-    operationName: 'mySubmissionDetail',
-    variables: { id: submissionId },
     query:
-      'query mySubmissionDetail($id: ID!) {\n  submissionDetail(submissionId: $id) {\n    id\n    code\n    runtime\n    memory\n  lang\n   rawMemory\n}\n}\n',
+      '\n    query submissionDetails($submissionId: ID!) {\n  submissionDetail(submissionId: $submissionId) {\n    code\n    timestamp\n    statusDisplay\n    isMine\n    runtimeDisplay: runtime\n    memoryDisplay: memory\n    memory: rawMemory\n    lang\n    langVerboseName\n   runtimePercentile\n    memoryPercentile\n  }\n}\n    ',
+    variables: { submissionId },
   }
 }
 

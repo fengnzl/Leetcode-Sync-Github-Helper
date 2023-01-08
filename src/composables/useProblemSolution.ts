@@ -1,4 +1,5 @@
 import { isLeetcodeCn } from '../config/leetcode'
+import type { ISolutionInfo } from '../Types/leetcode'
 import { useLeetcodePost } from './useLeetcodeFetch'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { ENDNOTE } from '~/config/common'
@@ -6,7 +7,7 @@ import type { IProblemCnSolutionRes, IProblemEnSolutionRes } from '~/Types/leetc
 
 const { getProblemSolutionFn } = getLeetcodeInfo()
 export const useProblemSolution = () => {
-  const code = ref<string>('')
+  const solutionInfo = ref<ISolutionInfo | null>(null)
   const isSolutionError = ref<boolean>(false)
   async function getSolution(submissionId: number) {
     const { data, statusCode, error }
@@ -19,19 +20,38 @@ export const useProblemSolution = () => {
     }
     else {
       if (isLeetcodeCn()) {
-        code.value = (
-          data.value! as IProblemCnSolutionRes
-        ).data.submissionDetail.code
+        const { code, runtimeDisplay, runtimePercentile, memoryDisplay, memoryPercentile, lang } = (data.value! as IProblemCnSolutionRes).data.submissionDetail
+        solutionInfo.value = {
+          code,
+          runtimeDisplay,
+          runtimePercentile,
+          memoryDisplay,
+          memoryPercentile,
+          lang,
+        }
       }
       else {
-        code.value = (
-          data.value! as IProblemEnSolutionRes
-        ).data.submissionDetails.code
+        const {
+          code,
+          runtimeDisplay,
+          runtimePercentile,
+          memoryDisplay,
+          memoryPercentile,
+          lang,
+        } = (data.value! as IProblemEnSolutionRes).data.submissionDetails
+        solutionInfo.value = {
+          code,
+          runtimeDisplay,
+          runtimePercentile,
+          memoryDisplay,
+          memoryPercentile,
+          lang: lang.name,
+        }
       }
     }
   }
   return {
-    code,
+    solutionInfo,
     isSolutionError,
     getSolution,
   }

@@ -1,25 +1,35 @@
 import { LEETCODE_LANGUAGE, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
+import type { ISolutionInfo } from '../Types/leetcode'
 import { gihubUserNameStorage, githubRepoNameStorage, leetcodeProblemSha } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
 import { useProblemReadme } from '~/composables/useProblemReadme'
 import type { IQuestionTitle, LeetcodeLanguageType } from '~/Types/leetcode'
 import { useProblemSolution } from '~/composables/useProblemSolution'
 const {
-  successSelector,
+  oldSuccessSelector,
+  newSuccessSelector,
   passStatusSelector,
   oldTitleSelector,
   newTitleSelector,
   oldCodeSelector,
-  newCodeSelector,
   passOldTableTdClass,
   passNewTableTdClass,
 } = getLeetcodeInfo()
 
-export const checkProblemPassed: () => boolean = () => {
+function checkProblemPassedInOld(): boolean {
   const successEle = document.querySelector(
-    successSelector,
+    oldSuccessSelector,
   ) as HTMLElement | null
   return successEle?.innerText.trim() === 'Success'
+}
+
+function checkProblemPassedInNew(): boolean {
+  const successEleArr = Array.from(document.querySelectorAll(newSuccessSelector)).filter(elem => elem.querySelector('svg'))
+  return successEleArr[0]?.querySelector('span')?.innerText === 'Accepted'
+}
+
+export const checkProblemPassed: () => boolean = () => {
+  return isNewUI() ? checkProblemPassedInNew() : checkProblemPassedInOld()
 }
 
 function leadingZero(str: string, count: number) {
@@ -36,10 +46,13 @@ export function getQuestionTitle(): IQuestionTitle {
     ?.toLowerCase()
     .split('.') as string[]
   const title = questionTitle.trim().toLowerCase().replace(/\s+/g, '-')
+  const enQuestionTitle = getEnProblemTtile()
+  const leadingNum = leadingZero(questionNum, LEETCODE_LEADING_COUNT)
   return {
-    questionNum: leadingZero(questionNum, LEETCODE_LEADING_COUNT),
+    questionNum: leadingNum,
     questionTitle: title,
-    enQuestionTitle: getEnProblemTtile(),
+    enQuestionTitle,
+    fullTitle: leadingNum + enQuestionTitle,
   }
 }
 
@@ -47,7 +60,7 @@ export async function getProblemMd(): Promise<string> {
   const questionTitle = getEnProblemTtile()
   const sha = leetcodeProblemSha.value[questionTitle]
   let markdown = ''
-  if (!sha?.readme) {
+  if (!sha) {
     const { getProblemReadme, readme } = useProblemReadme()
     await getProblemReadme(questionTitle)
     markdown = readme.value
@@ -63,30 +76,30 @@ export const getTimeAndMemoryUsage: () => string = () => {
   return `Time: ${time} (${timePercent}), Space: ${usage} (${usagePercent}) - ${ENDNOTE}`
 }
 
-export async function getQuestionSolution(): Promise<string> {
-  if (isNewUI())
-    return getSolutionInNew()
-
-  else
-    return await getSolutionInOld()
+export async function getQuestionSolution(): Promise<ISolutionInfo | null> {
+  return isNewUI() ? await getSolutionInNew() : await getSolutionInOld()
 }
 
-function getSolutionInNew(): string {
-  const codeEle = document.getElementsByTagName(newCodeSelector)[0]
-  return codeEle ? Array.from(codeEle.children).map(child => (child as HTMLElement).innerText).join() : ''
+async function getSolutionInNew(): Promise<ISolutionInfo | null> {
+  const submissionId = location.pathname.match(/\/submissions\/([0-9]*)\//)?.[1]
+  if (!submissionId)
+    return null
+  const { solutionInfo, getSolution } = useProblemSolution()
+  await getSolution(Number(submissionId))
+  return solutionInfo.value
 }
 
-async function getSolutionInOld(): Promise<string> {
+async function getSolutionInOld(): Promise<ISolutionInfo | null> {
   const aEle = document.querySelector(oldCodeSelector) as HTMLAnchorElement
   const href = aEle?.getAttribute('href')
   if (!aEle || !href)
-    return ''
+    return null
   const submissionId = href.slice(SUBMISSION_DETAIL_PREFIX.length, -1)
   if (!submissionId)
-    return ''
-  const { code, getSolution } = useProblemSolution()
+    return null
+  const { solutionInfo, getSolution } = useProblemSolution()
   await getSolution(Number(submissionId))
-  return code.value
+  return solutionInfo.value
 }
 
 export function getLanguage(): string | null {
