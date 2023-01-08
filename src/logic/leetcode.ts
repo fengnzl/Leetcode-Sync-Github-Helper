@@ -1,5 +1,5 @@
 import { LEETCODE_LANGUAGE, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
-import { leetcodeProblemSha } from './storage'
+import { gihubUserNameStorage, githubRepoNameStorage, leetcodeProblemSha } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
 import { useProblemReadme } from '~/composables/useProblemReadme'
 import type { IQuestionTitle, LeetcodeLanguageType } from '~/Types/leetcode'
@@ -26,6 +26,9 @@ function leadingZero(str: string, count: number) {
   const len = str.length
   return len >= count ? str : '0'.repeat(count - len) + str
 }
+function getEnProblemTtile() {
+  return location.pathname.match(/\/problems\/([a-zA-Z-0-9]*)\//)![1]
+}
 export function getQuestionTitle(): IQuestionTitle {
   const titleSelector = isNewUI() ? newTitleSelector : oldTitleSelector
   const titleEle = document.querySelector(titleSelector) as HTMLElement
@@ -36,13 +39,12 @@ export function getQuestionTitle(): IQuestionTitle {
   return {
     questionNum: leadingZero(questionNum, LEETCODE_LEADING_COUNT),
     questionTitle: title,
+    enQuestionTitle: getEnProblemTtile(),
   }
 }
 
 export async function getProblemMd(): Promise<string> {
-  const questionTitle = location.pathname.match(
-    /\/problems\/([a-zA-Z-0-9]*)\//,
-  )![1]
+  const questionTitle = getEnProblemTtile()
   const sha = leetcodeProblemSha.value[questionTitle]
   let markdown = ''
   if (!sha?.readme) {
@@ -97,3 +99,7 @@ export function getLanguage(): string | null {
     return null
   return LEETCODE_LANGUAGE[(filterEle[0] as HTMLElement).innerText.toLowerCase() as LeetcodeLanguageType]
 }
+
+export const githubOwnerRepo = computed(
+  () => `${gihubUserNameStorage.value}/${githubRepoNameStorage.value}`,
+)

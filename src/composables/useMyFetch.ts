@@ -43,3 +43,19 @@ export function usePost<T = unknown, U = unknown>(
 ): UseFetchReturn<T> {
   return useMyFetch<T>(url, config).post(payload).json()
 }
+
+export function usePut<T = unknown, U = unknown>(
+  url: string,
+  payload?: U,
+  config: UseFetchOptions = {},
+): UseFetchReturn<T> {
+  return useMyFetch<T>(url, config).put(payload).json()
+}
+
+export function usePatch<T = unknown, U = unknown>(
+  url: string,
+  payload?: U,
+  config: UseFetchOptions = {},
+): UseFetchReturn<T> {
+  return useMyFetch<T>(url, config).patch(payload).json()
+}

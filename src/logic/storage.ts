@@ -20,7 +20,9 @@ export const gihubUserNameStorage = useStorageLocal<string>(GITHUB_USER_NAME, ''
 
 export const leetcodeSyncTokenType = useStorageLocal<string>(LEETCODE_SYNC_TOKEN_TYPE, '', { listenToStorageChanges: true })
 
-export const githubRepoNameStorage = useStorageLocal<string>(GITHUB_REPO_NAME, '')
+export const githubRepoNameStorage = useStorageLocal<string>(GITHUB_REPO_NAME, '', {
+  listenToStorageChanges: true,
+})
 
 export const leetcodeProblemSolved = useStorageLocal<IProblemSolved>(
   LEETCODE_PROBLEM_SOLVED,

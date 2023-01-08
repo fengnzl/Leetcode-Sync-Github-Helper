@@ -37,6 +37,7 @@ export interface IPostConig<T> {
 export interface IQuestionTitle {
   questionNum: string
   questionTitle: string
+  enQuestionTitle: string
 }
 
 export interface IProblemInfoRes {
