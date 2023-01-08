@@ -1,18 +1,13 @@
 import { leetcodeAllOneCommitStorage, leetcodeProblemSha } from '../logic/storage'
-import { LEETCODE_LANGUAGE } from '../config/leetcode'
 import { useGithubReference } from './useGithubReference'
 import { useFileBlob } from './useFileBlob'
 import { useGitTrees } from './useGitTrees'
 import { useCreateCommit } from './useCreateCommit'
 import {
-  checkProblemPassed,
   getProblemMd,
   getQuestionSolution,
-  getQuestionTitle,
 } from '~/logic/leetcode'
 import type { ITree, IUploadAllOne } from '~/Types/github'
-import type { LeetcodeLanguageType } from '~/Types/leetcode'
-import { ENDNOTE } from '~/config/common'
 
 /**
  * for first upload
@@ -28,31 +23,27 @@ import { ENDNOTE } from '~/config/common'
 export const useUploadToGit = () => {
   const isUploading = ref<boolean>(false)
   const uploadToGit = async () => {
-    if (!checkProblemPassed())
-      return
-    const [markdown, codeInfo] = await Promise.all([
+    // if (!checkProblemPassed())
+    //   return
+    const [mdInfo, codeInfo] = await Promise.all([
       getProblemMd(),
       getQuestionSolution(),
     ])
     if (!codeInfo)
       return
-    const { enQuestionTitle, fullTitle } = getQuestionTitle()
-    const { code, lang, memoryDisplay, memoryPercentile, runtimeDisplay, runtimePercentile } = codeInfo
+    const { markdown, enQTitle, fullTitle } = mdInfo
+    const { code, langExt, runtimeMemoryMsg } = codeInfo
     isUploading.value = true
     // firstUpload
     if (
-      !leetcodeProblemSha.value[enQuestionTitle]
+      !leetcodeProblemSha.value[enQTitle]
       && leetcodeAllOneCommitStorage.value
     ) {
       uploadToGitAllOne({
         markdown,
         code,
-        msg: `Time: ${runtimeDisplay} (${runtimePercentile.toFixed(
-          2,
-        )}), Space: ${memoryDisplay} (${memoryPercentile.toFixed(
-          2,
-        )}) - ${ENDNOTE}`,
-        lang: LEETCODE_LANGUAGE[lang as LeetcodeLanguageType],
+        msg: runtimeMemoryMsg,
+        lang: langExt,
         directory: fullTitle,
       }).finally(() => (isUploading.value = false))
     }

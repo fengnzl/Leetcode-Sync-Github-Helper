@@ -96,4 +96,17 @@ export interface ISolutionInfo {
   memoryPercentile: number
   runtimeDisplay: string
   runtimePercentile: number
+  [key: string]: any
+}
+
+export interface IParsedSolution {
+  langExt: string
+  code: string
+  runtimeMemoryMsg: string
+}
+
+export interface IProblemInfoParsed {
+  markdown: string
+  enQTitle: string
+  fullTitle: string
 }

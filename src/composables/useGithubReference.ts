@@ -1,7 +1,7 @@
-import { githubOwnerRepo } from './../logic/leetcode'
 import { useGet, usePatch } from './useMyFetch'
 import type { IReferenceRes, IReferenceUpdate } from '~/Types/github'
 import { ENDNOTE, GITHUB_BRAMCH } from '~/config'
+import { githubRepoNameStorage } from '~/logic/storage'
 // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28#get-a-reference
 
 export const useGithubReference = () => {
@@ -9,7 +9,7 @@ export const useGithubReference = () => {
   const isUploadSuccess = ref<boolean>(false)
   async function getBranchRef(branch = GITHUB_BRAMCH) {
     const { data, statusCode, error } = await useGet<IReferenceRes>(
-      `/repos/${githubOwnerRepo}/git/ref/heads/${branch}`,
+      `/repos/${githubRepoNameStorage.value}/git/ref/heads/${branch}`,
     )
     if (statusCode.value === 200 && !error.value)
       mainRefSha.value = data.value?.object.sha || ''
@@ -25,7 +25,7 @@ export const useGithubReference = () => {
       IReferenceRes,
       IReferenceUpdate
     >(
-      `/repos/${githubOwnerRepo}/git/refs/heads${
+      `/repos/${githubRepoNameStorage.value}/git/refs/heads/${
         params.branch || GITHUB_BRAMCH
       }`,
       {

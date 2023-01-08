@@ -8,7 +8,7 @@ export const LEETCODE_LANGUAGE = {
   'c': '.c',
   'java': '.java',
   'c#': '.cs',
-  'javascript': 'js',
+  'javascript': '.js',
   'ruby': '.rb',
   'swift': '.swift',
   'go': '.go',

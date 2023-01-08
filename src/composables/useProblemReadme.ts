@@ -2,11 +2,15 @@ import type { IProblemInfoRes } from '../Types/leetcode'
 import { isLeetcodeCn } from '../config/leetcode'
 import { useLeetcodePost } from './useLeetcodeFetch'
 import { getProblemInfoQuery } from '~/config/leetcode'
-import { ENDNOTE } from '~/config/common'
+import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config/common'
+import { leadingZero } from '~/logic/leetcode'
 export const useProblemReadme = () => {
   const readme = ref<string>('')
   const isReadmeError = ref<boolean>(false)
+  const enQTitle = ref('')
+  const fullTitle = ref('')
   async function getProblemReadme(title: string) {
+    enQTitle.value = title
     const { data, error, statusCode } = await useLeetcodePost<IProblemInfoRes>({
       payload: getProblemInfoQuery(title),
     })
@@ -16,6 +20,7 @@ export const useProblemReadme = () => {
     }
     else {
       readme.value = getMarkdownInfo(data.value!)
+      fullTitle.value = getFullTitle(data.value!, title)
     }
   }
 
@@ -23,7 +28,15 @@ export const useProblemReadme = () => {
     getProblemReadme,
     readme,
     isReadmeError,
+    enQTitle,
+    fullTitle,
   }
+}
+
+function getFullTitle(res: IProblemInfoRes, title: string): string {
+  const { questionId } = res.data.question
+  const leadingNum = leadingZero(`${questionId}`, LEETCODE_LEADING_COUNT)
+  return `${leadingNum}-${title}`
 }
 
 function getMarkdownInfo(res: IProblemInfoRes): string {
@@ -56,3 +69,4 @@ function getQuestionUrl(): string {
   }
   return questionUrl
 }
+

@@ -1,6 +1,6 @@
 import { LEETCODE_LANGUAGE, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
-import type { ISolutionInfo } from '../Types/leetcode'
-import { gihubUserNameStorage, githubRepoNameStorage, leetcodeProblemSha } from './storage'
+import type { IParsedSolution, IProblemInfoParsed } from '../Types/leetcode'
+import { leetcodeProblemSha } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
 import { useProblemReadme } from '~/composables/useProblemReadme'
 import type { IQuestionTitle, LeetcodeLanguageType } from '~/Types/leetcode'
@@ -32,7 +32,7 @@ export const checkProblemPassed: () => boolean = () => {
   return isNewUI() ? checkProblemPassedInNew() : checkProblemPassedInOld()
 }
 
-function leadingZero(str: string, count: number) {
+export function leadingZero(str: string, count: number) {
   const len = str.length
   return len >= count ? str : '0'.repeat(count - len) + str
 }
@@ -56,16 +56,25 @@ export function getQuestionTitle(): IQuestionTitle {
   }
 }
 
-export async function getProblemMd(): Promise<string> {
+export async function getProblemMd(): Promise<IProblemInfoParsed> {
   const questionTitle = getEnProblemTtile()
   const sha = leetcodeProblemSha.value[questionTitle]
-  let markdown = ''
-  if (!sha) {
-    const { getProblemReadme, readme } = useProblemReadme()
-    await getProblemReadme(questionTitle)
-    markdown = readme.value
+  const problemInfo: IProblemInfoParsed = {
+    markdown: '',
+    enQTitle: '',
+    fullTitle: '',
   }
-  return markdown
+  if (!sha) {
+    const { getProblemReadme, readme, enQTitle, fullTitle }
+      = useProblemReadme()
+    await getProblemReadme(questionTitle)
+    Object.assign(problemInfo, {
+      markdown: readme.value,
+      enQTitle: enQTitle.value,
+      fullTitle: fullTitle.value,
+    })
+  }
+  return problemInfo
 }
 
 export const getTimeAndMemoryUsage: () => string = () => {
@@ -76,20 +85,26 @@ export const getTimeAndMemoryUsage: () => string = () => {
   return `Time: ${time} (${timePercent}), Space: ${usage} (${usagePercent}) - ${ENDNOTE}`
 }
 
-export async function getQuestionSolution(): Promise<ISolutionInfo | null> {
+export async function getQuestionSolution(): Promise<IParsedSolution | null> {
   return isNewUI() ? await getSolutionInNew() : await getSolutionInOld()
 }
 
-async function getSolutionInNew(): Promise<ISolutionInfo | null> {
-  const submissionId = location.pathname.match(/\/submissions\/([0-9]*)\//)?.[1]
+async function getSolutionInNew(): Promise<IParsedSolution | null> {
+  const submissionId = location.pathname.match(
+    /\/submissions\/([0-9]*)\//,
+  )?.[1]
   if (!submissionId)
     return null
-  const { solutionInfo, getSolution } = useProblemSolution()
+  const { langExt, code, runtimeMemoryMsg, getSolution } = useProblemSolution()
   await getSolution(Number(submissionId))
-  return solutionInfo.value
+  return {
+    langExt: langExt.value,
+    code: code.value,
+    runtimeMemoryMsg: runtimeMemoryMsg.value,
+  }
 }
 
-async function getSolutionInOld(): Promise<ISolutionInfo | null> {
+async function getSolutionInOld(): Promise<IParsedSolution | null> {
   const aEle = document.querySelector(oldCodeSelector) as HTMLAnchorElement
   const href = aEle?.getAttribute('href')
   if (!aEle || !href)
@@ -97,9 +112,13 @@ async function getSolutionInOld(): Promise<ISolutionInfo | null> {
   const submissionId = href.slice(SUBMISSION_DETAIL_PREFIX.length, -1)
   if (!submissionId)
     return null
-  const { solutionInfo, getSolution } = useProblemSolution()
+  const { langExt, code, runtimeMemoryMsg, getSolution } = useProblemSolution()
   await getSolution(Number(submissionId))
-  return solutionInfo.value
+  return {
+    langExt: langExt.value,
+    code: code.value,
+    runtimeMemoryMsg: runtimeMemoryMsg.value,
+  }
 }
 
 export function getLanguage(): string | null {
@@ -113,6 +132,3 @@ export function getLanguage(): string | null {
   return LEETCODE_LANGUAGE[(filterEle[0] as HTMLElement).innerText.toLowerCase() as LeetcodeLanguageType]
 }
 
-export const githubOwnerRepo = computed(
-  () => `${gihubUserNameStorage.value}/${githubRepoNameStorage.value}`,
-)
