@@ -40,7 +40,9 @@ export const sharedConfig: UserConfig = {
       // generate `components.d.ts` for ts support with Volar
       dts: r('src/components.d.ts'),
       resolvers: [
-        ElementPlusResolver(),
+        ElementPlusResolver({
+          importStyle: 'sass',
+        }),
         // auto import icons
         IconsResolver({
           componentPrefix: '',
