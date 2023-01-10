@@ -31,6 +31,7 @@ export const sharedConfig: UserConfig = {
           'webextension-polyfill': [['*', 'browser']],
         },
       ],
+      resolvers: [ElementPlusResolver()],
       dts: r('src/auto-imports.d.ts'),
     }),
 

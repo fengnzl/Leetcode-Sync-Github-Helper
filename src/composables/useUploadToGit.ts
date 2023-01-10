@@ -21,8 +21,11 @@ import type { ITree, IUploadAllOne } from '~/Types/github'
  * for update only upload code
  */
 export const useUploadToGit = () => {
+  const isUploadSuccess = ref(false)
   const isUploading = ref<boolean>(false)
+  const uploadComplete = ref(false)
   const uploadToGit = async () => {
+    isUploadSuccess.value = false
     // if (!checkProblemPassed())
     //   return
     const [mdInfo, codeInfo] = await Promise.all([
@@ -39,18 +42,25 @@ export const useUploadToGit = () => {
       !leetcodeProblemSha.value[enQTitle]
       && leetcodeAllOneCommitStorage.value
     ) {
-      uploadToGitAllOne({
+      const isSuccess = await uploadToGitAllOne({
         markdown,
         code,
         msg: runtimeMemoryMsg,
         lang: langExt,
         directory: fullTitle,
-      }).finally(() => (isUploading.value = false))
+      }).finally(() => {
+        isUploading.value = false
+        uploadComplete.value = true
+        setTimeout(() => uploadComplete.value = false, 1500)
+      })
+      isUploadSuccess.value = isSuccess
     }
   }
   return {
     isUploading,
     uploadToGit,
+    isUploadSuccess,
+    uploadComplete,
   }
 }
 

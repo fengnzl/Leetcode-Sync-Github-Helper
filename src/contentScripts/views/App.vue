@@ -18,7 +18,7 @@ const { style } = useDraggable(draggableContainer, {
 
 // check whether click submit button
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
-const { uploadToGit } = useUploadToGit()
+const { uploadToGit, isUploading, isUploadSuccess, uploadComplete } = useUploadToGit()
 watch(isSubmitFinished, (newVal: boolean) => {
   if (newVal) {
     changeSubmitStatus(false)
@@ -36,6 +36,8 @@ watch(isSubmitFinished, (newVal: boolean) => {
     style="touch-action:none;"
     :style="style"
   >
-    LCYG
+    <line-md:uploading-loop v-show="isUploading" class="text-24px c-#409eff" />
+    <icon-park:source-code v-show="!isUploading" class="block m-auto text-white text-lg" @click="uploadToGit" />
+    <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
   </div>
 </template>
