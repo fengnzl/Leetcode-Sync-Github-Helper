@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'uno.css'
-import { useDraggable } from '@vueuse/core'
+import { useDebounceFn, useDraggable } from '@vueuse/core'
 import { useSubmitStatus } from '~/composables/useSubmitStatus'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { useUploadToGit } from '~/composables/useUploadToGit'
@@ -19,6 +19,7 @@ const { style } = useDraggable(draggableContainer, {
 // check whether click submit button
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
 const { uploadToGit, isUploading, isUploadSuccess, uploadComplete } = useUploadToGit()
+const debounceUploadToGit = useDebounceFn(uploadToGit, 300)
 watch(isSubmitFinished, (newVal: boolean) => {
   if (newVal) {
     changeSubmitStatus(false)
@@ -37,7 +38,7 @@ watch(isSubmitFinished, (newVal: boolean) => {
     :style="style"
   >
     <line-md:uploading-loop v-show="isUploading" class="text-24px c-#409eff" />
-    <icon-park:source-code v-show="!isUploading" class="block m-auto text-white text-lg" @click="uploadToGit" />
+    <icon-park:source-code v-show="!isUploading" class="block m-auto text-white text-lg" @click="debounceUploadToGit" />
     <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
   </div>
 </template>

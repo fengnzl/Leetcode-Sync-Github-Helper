@@ -24,16 +24,24 @@ export const useUploadToGit = () => {
   const isUploadSuccess = ref(false)
   const isUploading = ref<boolean>(false)
   const uploadComplete = ref(false)
+  const setCompleteStatus = () => {
+    isUploading.value = false
+    uploadComplete.value = true
+    setTimeout(() => uploadComplete.value = false, 1500)
+  }
   const uploadToGit = async () => {
     isUploadSuccess.value = false
+    isUploading.value = true
     // if (!checkProblemPassed())
     //   return
     const [mdInfo, codeInfo] = await Promise.all([
       getProblemMd(),
       getQuestionSolution(),
     ])
-    if (!codeInfo)
+    if (!codeInfo) {
+      setCompleteStatus()
       return
+    }
     const { markdown, enQTitle, fullTitle } = mdInfo
     const { code, langExt, runtimeMemoryMsg } = codeInfo
     isUploading.value = true
@@ -48,11 +56,7 @@ export const useUploadToGit = () => {
         msg: runtimeMemoryMsg,
         lang: langExt,
         directory: fullTitle,
-      }).finally(() => {
-        isUploading.value = false
-        uploadComplete.value = true
-        setTimeout(() => uploadComplete.value = false, 1500)
-      })
+      }).finally(setCompleteStatus)
       isUploadSuccess.value = isSuccess
     }
   }
