@@ -63,19 +63,27 @@ export function getSubmitStatus(
   submitBtn: Element,
   isSubmitFinished: Ref<boolean>,
 ) {
-  const targetNode = isNewUI() ? submitBtn : submitBtn.querySelector('span')!
+  const isNew = isNewUI()
+  const targetNode = isNew ? submitBtn : submitBtn.querySelector('span')!
   const mutationObserver = new MutationObserver(observeCb)
   const observeConfig: MutationObserverInit = {
     attributes: true,
     subtree: true,
     attributeOldValue: true,
-    attributeFilter: ['disabled'],
+    attributeFilter: ['disabled', 'class'],
   }
   function observeCb(mutations: MutationRecord[]) {
     const { oldValue } = mutations[0]
-    const curVal = targetNode.getAttribute('disabled')
-    isSubmitFinished.value
-      = (oldValue === '' || oldValue === 'true') && curVal === null
+    if (isNew) {
+      const prevDisabled = oldValue?.includes('cursor-not-allowed') || false
+      isSubmitFinished.value
+        = prevDisabled && !targetNode.className.includes('cursor-not-allowed')
+    }
+    else {
+      const curVal = targetNode.getAttribute('disabled')
+      isSubmitFinished.value
+        = (oldValue === '' || oldValue === 'true') && curVal === null
+    }
   }
   mutationObserver.observe(targetNode, observeConfig)
   return mutationObserver

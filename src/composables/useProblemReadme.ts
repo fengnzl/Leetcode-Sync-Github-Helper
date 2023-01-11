@@ -4,6 +4,7 @@ import { useLeetcodePost } from './useLeetcodeFetch'
 import { getProblemInfoQuery } from '~/config/leetcode'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config/common'
 import { leadingZero } from '~/logic/leetcode'
+import { problemBasicInfoStorage } from '~/logic/storage'
 export const useProblemReadme = () => {
   const readme = ref<string>('')
   const isReadmeError = ref<boolean>(false)
@@ -21,6 +22,11 @@ export const useProblemReadme = () => {
     else {
       readme.value = getMarkdownInfo(data.value!)
       fullTitle.value = getFullTitle(data.value!, title)
+      problemBasicInfoStorage.value[title] = {
+        enQTitle: title,
+        fullTitle: fullTitle.value,
+        difficulty: data.value!.data.question.difficulty,
+      }
     }
   }
 

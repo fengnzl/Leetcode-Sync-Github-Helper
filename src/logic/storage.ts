@@ -3,13 +3,14 @@ import {
   GITHUB_USER_NAME,
   IS_GENERATE_TOKEN,
   LEETCODE_ALL_ONE_COMMIT,
+  LEETCODE_PROBLEM_DIFFICULT,
   LEETCODE_PROBLEM_SHA,
   LEETCODE_PROBLEM_SOLVED,
   LEETCODE_SYNC_TOKEN,
   LEETCODE_SYNC_TOKEN_TYPE,
 } from '../config/common'
 import { useStorageLocal } from '~/composables/useStorageLocal'
-import type { IProblemSolved } from '~/Types/leetcode'
+import type { IProblemBasicInfo, IProblemSolved } from '~/Types/leetcode'
 
 export const leetcodeSyncToken = useStorageLocal<string>(LEETCODE_SYNC_TOKEN, '', { listenToStorageChanges: true })
 
@@ -28,15 +29,19 @@ export const githubRepoNameStorage = useStorageLocal<string>(GITHUB_REPO_NAME, '
 export const leetcodeProblemSolved = useStorageLocal<IProblemSolved>(
   LEETCODE_PROBLEM_SOLVED,
   {
-    easy: 0,
-    medium: 0,
-    hard: 0,
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
   },
 )
 
-export const leetcodeProblemSha = useStorageLocal<Record<string, boolean>>(
+export const leetcodeProblemSha = useStorageLocal<Record<string, string>>(
   LEETCODE_PROBLEM_SHA,
   {},
 )
 
 export const leetcodeAllOneCommitStorage = useStorageLocal<boolean>(LEETCODE_ALL_ONE_COMMIT, true)
+
+export const problemBasicInfoStorage = useStorageLocal<
+  Record<string, IProblemBasicInfo>
+>(LEETCODE_PROBLEM_DIFFICULT, {})

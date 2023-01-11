@@ -92,10 +92,29 @@ export interface ICreateCommitRes {
   [key: string]: any
 }
 
-export interface IUploadAllOne {
+export interface IUploadCommon {
+  enQTitle: string
   markdown: string
   code: string
   msg: string
   lang: string
   directory: string
+}
+
+export interface IUploadSingleReq {
+  message: string
+  content: string
+  sha?: string
+  [key: string]: any
+}
+
+export interface IUploadSingleParam extends IUploadSingleReq {
+  path: string
+}
+
+export interface IUploadSingleRes {
+  content: {
+    sha: string
+    [key: string]: any
+  }
 }

@@ -10,3 +10,4 @@ export const LEETCODE_ALL_ONE_COMMIT = 'LEETCODE_ALL_ONE_COMMIT'
 export const LEETCODE_LEADING_COUNT = 4
 export const ENDNOTE = 'Leecode Sync Helper'
 export const GITHUB_BRAMCH = 'main'
+export const LEETCODE_PROBLEM_DIFFICULT = 'LEETCODE_PROBLEM_DIFFICULT'

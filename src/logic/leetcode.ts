@@ -1,6 +1,6 @@
 import { LEETCODE_LANGUAGE, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
-import type { IParsedSolution, IProblemInfoParsed } from '../Types/leetcode'
-import { leetcodeProblemSha } from './storage'
+import type { IParsedSolution, IProblemBasicInfo, IProblemInfoParsed } from '../Types/leetcode'
+import { problemBasicInfoStorage } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
 import { useProblemReadme } from '~/composables/useProblemReadme'
 import type { IQuestionTitle, LeetcodeLanguageType } from '~/Types/leetcode'
@@ -58,23 +58,14 @@ export function getQuestionTitle(): IQuestionTitle {
 
 export async function getProblemMd(): Promise<IProblemInfoParsed> {
   const questionTitle = getEnProblemTtile()
-  const sha = leetcodeProblemSha.value[questionTitle]
-  const problemInfo: IProblemInfoParsed = {
-    markdown: '',
-    enQTitle: '',
-    fullTitle: '',
-  }
-  if (!sha) {
-    const { getProblemReadme, readme, enQTitle, fullTitle }
-      = useProblemReadme()
+  const { getProblemReadme, readme } = useProblemReadme()
+  if (!problemBasicInfoStorage.value[questionTitle])
     await getProblemReadme(questionTitle)
-    Object.assign(problemInfo, {
-      markdown: readme.value,
-      enQTitle: enQTitle.value,
-      fullTitle: fullTitle.value,
-    })
+
+  return {
+    markdown: readme.value,
+    ...(problemBasicInfoStorage.value[questionTitle] as IProblemBasicInfo),
   }
-  return problemInfo
 }
 
 export const getTimeAndMemoryUsage: () => string = () => {

@@ -1,13 +1,17 @@
-import { leetcodeAllOneCommitStorage, leetcodeProblemSha } from '../logic/storage'
+import { Buffer } from 'buffer'
+import { leetcodeAllOneCommitStorage, leetcodeProblemSha, leetcodeProblemSolved, problemBasicInfoStorage } from '../logic/storage'
+import type { IUploadSingleParam } from '../Types/github'
 import { useGithubReference } from './useGithubReference'
 import { useFileBlob } from './useFileBlob'
 import { useGitTrees } from './useGitTrees'
 import { useCreateCommit } from './useCreateCommit'
+import { useUploadSingle } from './useUploadSingle'
 import {
+  checkProblemPassed,
   getProblemMd,
   getQuestionSolution,
 } from '~/logic/leetcode'
-import type { ITree, IUploadAllOne } from '~/Types/github'
+import type { ITree, IUploadCommon } from '~/Types/github'
 
 /**
  * for first upload
@@ -31,9 +35,9 @@ export const useUploadToGit = () => {
   }
   const uploadToGit = async () => {
     isUploadSuccess.value = false
-    isUploading.value = true
     // if (!checkProblemPassed())
     //   return
+    isUploading.value = true
     const [mdInfo, codeInfo] = await Promise.all([
       getProblemMd(),
       getQuestionSolution(),
@@ -47,17 +51,27 @@ export const useUploadToGit = () => {
     isUploading.value = true
     // firstUpload
     if (
-      !leetcodeProblemSha.value[enQTitle]
+      !leetcodeProblemSha.value[`${enQTitle}${langExt}`]
       && leetcodeAllOneCommitStorage.value
     ) {
-      const isSuccess = await uploadToGitAllOne({
+      isUploadSuccess.value = await uploadToGitAllOne({
+        enQTitle,
         markdown,
         code,
         msg: runtimeMemoryMsg,
         lang: langExt,
         directory: fullTitle,
       }).finally(setCompleteStatus)
-      isUploadSuccess.value = isSuccess
+    }
+    else {
+      isUploadSuccess.value = await uploadToGitSingle({
+        enQTitle,
+        markdown,
+        code,
+        msg: runtimeMemoryMsg,
+        lang: langExt,
+        directory: fullTitle,
+      }).finally(setCompleteStatus)
     }
   }
   return {
@@ -69,12 +83,13 @@ export const useUploadToGit = () => {
 }
 
 async function uploadToGitAllOne({
+  enQTitle,
   markdown,
   code,
   msg,
   lang,
   directory,
-}: IUploadAllOne): Promise<boolean> {
+}: IUploadCommon): Promise<boolean> {
   const { getBranchRef, updateBranchRef, isUploadSuccess } = useGithubReference()
   const { getFileBlob } = useFileBlob()
   const [mainSha, codeBlobSha, mdBlobSha] = await Promise.all([
@@ -116,5 +131,35 @@ async function uploadToGitAllOne({
   await updateBranchRef({
     sha: commitSha.value,
   })
+  if (isUploadSuccess.value)
+    updateShaAndSolved(codeBlobSha, enQTitle, lang)
+
+  return isUploadSuccess.value
+}
+
+function updateShaAndSolved(sha: string, enTitle: string, ext: string) {
+  const difficult = problemBasicInfoStorage.value[enTitle].difficulty
+  leetcodeProblemSolved.value[difficult]++
+  leetcodeProblemSha.value[`${enTitle}${ext}`] = sha
+}
+
+async function uploadToGitSingle({
+  enQTitle,
+  code,
+  msg,
+  lang,
+  directory,
+}: IUploadCommon): Promise<boolean> {
+  const sha = leetcodeProblemSha.value[`${enQTitle}${lang}`] || ''
+  const params: IUploadSingleParam = {
+    sha,
+    content: Buffer.from(code, 'utf-8').toString('base64'),
+    message: msg,
+    path: `${directory}/${directory}${lang}`,
+  }
+  const { uploadSha, isUploadSuccess, uploadSingle } = useUploadSingle()
+  await uploadSingle(params)
+  if (isUploadSuccess.value)
+    updateShaAndSolved(uploadSha.value, enQTitle, lang)
   return isUploadSuccess.value
 }

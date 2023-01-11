@@ -1,8 +1,13 @@
 import type { LEETCODE_LANGUAGE } from '../config/leetcode'
 export interface IProblemSolved {
-  easy: number
-  medium: number
-  hard: number
+  Easy: number
+  Medium: number
+  Hard: number
+}
+export interface IProblemBasicInfo {
+  enQTitle: string
+  fullTitle: string
+  difficulty: keyof IProblemSolved
 }
 export type LeetcodeLanguageType = keyof typeof LEETCODE_LANGUAGE
 export interface ILeetcodeInfo {
@@ -41,7 +46,7 @@ export interface IProblemInfoRes {
   data: {
     question: {
       content: string
-      difficulty: string
+      difficulty: keyof IProblemSolved
       titleSlug: string
       title: string
       translatedContent: string
@@ -109,4 +114,5 @@ export interface IProblemInfoParsed {
   markdown: string
   enQTitle: string
   fullTitle: string
+  [key: string]: any
 }
