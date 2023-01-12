@@ -31,12 +31,14 @@ export const useUploadToGit = () => {
   const setCompleteStatus = () => {
     isUploading.value = false
     uploadComplete.value = true
-    setTimeout(() => uploadComplete.value = false, 1500)
+    if (isUploadSuccess.value)
+      setTimeout(() => (uploadComplete.value = false), 1500)
   }
-  const uploadToGit = async () => {
+  const uploadToGit = async (isManual = false) => {
     isUploadSuccess.value = false
-    // if (!checkProblemPassed())
-    //   return
+    uploadComplete.value = false
+    if (!checkProblemPassed() && !isManual)
+      return
     isUploading.value = true
     const [mdInfo, codeInfo] = await Promise.all([
       getProblemMd(),
@@ -160,6 +162,7 @@ async function uploadToGitSingle({
   const { uploadSha, isUploadSuccess, uploadSingle } = useUploadSingle()
   await uploadSingle(params)
   if (isUploadSuccess.value)
-    updateShaAndSolved(uploadSha.value, enQTitle, lang)
+    leetcodeProblemSha.value[`${enQTitle}${lang}`] = uploadSha.value
+
   return isUploadSuccess.value
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import 'uno.css'
 import { useDebounceFn, useDraggable } from '@vueuse/core'
+import { vOnClickOutside } from '@vueuse/components'
 import { useSubmitStatus } from '~/composables/useSubmitStatus'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { useUploadToGit } from '~/composables/useUploadToGit'
@@ -19,13 +20,17 @@ const { style } = useDraggable(draggableContainer, {
 // check whether click submit button
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
 const { uploadToGit, isUploading, isUploadSuccess, uploadComplete } = useUploadToGit()
-const debounceUploadToGit = useDebounceFn(uploadToGit, 300)
+const debounceUploadToGit = useDebounceFn(() => uploadToGit(true), 300)
 watch(isSubmitFinished, (newVal: boolean) => {
   if (newVal) {
     changeSubmitStatus(false)
     uploadToGit()
   }
 })
+const isShowFailMsg = computed(() => !isUploadSuccess.value && uploadComplete.value)
+const closeShowError = () => {
+  uploadComplete.value = false
+}
 </script>
 
 <template>
@@ -38,7 +43,18 @@ watch(isSubmitFinished, (newVal: boolean) => {
     :style="style"
   >
     <line-md:uploading-loop v-show="isUploading" class="text-24px c-#409eff" />
-    <icon-park:source-code v-show="!isUploading" class="block m-auto text-white text-lg" @click="debounceUploadToGit" />
+    <icon-park:source-code v-show="!isUploading && !uploadComplete" class="block m-auto text-white text-lg" @click="debounceUploadToGit" />
     <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
+    <div
+      v-on-click-outside="closeShowError"
+      class="absolute right-50px bg-#303133 c-#fff w-290px rd-4px cursor-default"
+      p="x-4 y-2"
+      m="y-auto r-2"
+      transition="opacity duration-300"
+      :class="isShowFailMsg ? 'opacity-100' : 'opacity-0'"
+    >
+      Somthing went wrong, <span class="c-#67c23a cursor-pointer" @click.stop="debounceUploadToGit">Click me</span> to reupload!
+    </div>
+    <icon-park-outline:link-cloud-faild v-if="!isUploadSuccess && uploadComplete" class="#F56C6C" />
   </div>
 </template>

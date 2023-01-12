@@ -16,15 +16,15 @@ const total = computed(() => Object.values(leetcodeProblemSolved.value).reduce((
     </div>
     <div class="flex justify-center">
       <div class="text-#00af9b" :class="`text-size-${countSize}`">
-        Easy: <span class="ml10px">{{ leetcodeProblemSolved.easy }}</span>
+        Easy: <span class="ml10px">{{ leetcodeProblemSolved.Easy }}</span>
       </div>
 
       <div class="text-#ffb800 ml-20px mr-20px" :class="`text-size-${countSize}`">
-        Medium: <span class="ml10px">{{ leetcodeProblemSolved.medium }}</span>
+        Medium: <span class="ml10px">{{ leetcodeProblemSolved.Medium }}</span>
       </div>
 
       <div class="text-#ff2d55" :class="`text-size-${countSize}`">
-        Hard: <span class="ml10px">{{ leetcodeProblemSolved.hard }}</span>
+        Hard: <span class="ml10px">{{ leetcodeProblemSolved.Hard }}</span>
       </div>
     </div>
   </div>
