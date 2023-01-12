@@ -1,4 +1,4 @@
-import { LEETCODE_LANGUAGE, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
+import { LEETCODE_LANGUAGE, MAX_INTERVAL_COUNT, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
 import type { IParsedSolution, IProblemBasicInfo, IProblemInfoParsed } from '../Types/leetcode'
 import { problemBasicInfoStorage } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
@@ -15,21 +15,44 @@ const {
   passOldTableTdClass,
   passNewTableTdClass,
 } = getLeetcodeInfo()
+function checkProblemPassedInOld(): Promise<boolean> {
+  return new Promise((resolve) => {
+    let count = 0
+    setInterval(() => {
+      const successEle = document.querySelector(
+        oldSuccessSelector,
+      ) as HTMLElement | null
+      if (!successEle && count < MAX_INTERVAL_COUNT)
+        count++
 
-function checkProblemPassedInOld(): boolean {
-  const successEle = document.querySelector(
-    oldSuccessSelector,
-  ) as HTMLElement | null
-  return successEle?.innerText.trim() === 'Success'
+      else
+        resolve(successEle?.innerText.trim() === 'Success')
+    }, 800)
+  })
 }
 
-function checkProblemPassedInNew(): boolean {
-  const successEleArr = Array.from(document.querySelectorAll(newSuccessSelector)).filter(elem => elem.querySelector('svg'))
-  return successEleArr[0]?.querySelector('span')?.innerText === 'Accepted'
+function checkProblemPassedInNew(): Promise<boolean> {
+  return new Promise((resolve) => {
+    let count = 0
+    setInterval(() => {
+      const successEleArr = Array.from(
+        document.querySelectorAll(newSuccessSelector),
+      ).filter(elem => elem.querySelector('svg'))
+      if (!successEleArr[0] && count < MAX_INTERVAL_COUNT) {
+        count++
+      }
+      else {
+        resolve(
+          successEleArr[0]?.querySelector('span')?.innerText === 'Accepted',
+        )
+      }
+    }, 800)
+  })
 }
 
-export const checkProblemPassed: () => boolean = () => {
-  return isNewUI() ? checkProblemPassedInNew() : checkProblemPassedInOld()
+export const checkProblemPassed = async (): Promise<boolean> => {
+  // The passing state is not real-time
+  return isNewUI() ? await checkProblemPassedInNew() : await checkProblemPassedInOld()
 }
 
 export function leadingZero(str: string, count: number) {

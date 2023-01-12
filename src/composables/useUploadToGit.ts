@@ -28,16 +28,20 @@ export const useUploadToGit = () => {
   const isUploadSuccess = ref(false)
   const isUploading = ref<boolean>(false)
   const uploadComplete = ref(false)
+  const isShowFailMsg = ref(false)
   const setCompleteStatus = () => {
     isUploading.value = false
     uploadComplete.value = true
-    if (isUploadSuccess.value)
-      setTimeout(() => (uploadComplete.value = false), 1500)
+    setTimeout(() => (uploadComplete.value = false), 1500)
   }
-  const uploadToGit = async (isManual = false) => {
+  const resetStatus = () => {
     isUploadSuccess.value = false
     uploadComplete.value = false
-    if (!checkProblemPassed() && !isManual)
+    isShowFailMsg.value = false
+  }
+  const uploadToGit = async (isManual = false) => {
+    resetStatus()
+    if (!await checkProblemPassed() && !isManual)
       return
     isUploading.value = true
     const [mdInfo, codeInfo] = await Promise.all([
@@ -75,12 +79,14 @@ export const useUploadToGit = () => {
         directory: fullTitle,
       }).finally(setCompleteStatus)
     }
+    isShowFailMsg.value = !isUploadSuccess.value
   }
   return {
     isUploading,
     uploadToGit,
     isUploadSuccess,
     uploadComplete,
+    isShowFailMsg,
   }
 }
 

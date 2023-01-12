@@ -19,7 +19,7 @@ const { style } = useDraggable(draggableContainer, {
 
 // check whether click submit button
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
-const { uploadToGit, isUploading, isUploadSuccess, uploadComplete } = useUploadToGit()
+const { uploadToGit, isUploading, isUploadSuccess, uploadComplete, isShowFailMsg } = useUploadToGit()
 const debounceUploadToGit = useDebounceFn(() => uploadToGit(true), 300)
 watch(isSubmitFinished, (newVal: boolean) => {
   if (newVal) {
@@ -27,9 +27,8 @@ watch(isSubmitFinished, (newVal: boolean) => {
     uploadToGit()
   }
 })
-const isShowFailMsg = computed(() => !isUploadSuccess.value && uploadComplete.value)
 const closeShowError = () => {
-  uploadComplete.value = false
+  isShowFailMsg.value = false
 }
 </script>
 
@@ -43,7 +42,7 @@ const closeShowError = () => {
     :style="style"
   >
     <line-md:uploading-loop v-show="isUploading" class="text-24px c-#409eff" />
-    <icon-park:source-code v-show="!isUploading && !uploadComplete" class="block m-auto text-white text-lg" @click="debounceUploadToGit" />
+    <icon-park:source-code v-show="!isUploading && !uploadComplete" class="block m-auto text-white text-lg" />
     <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
     <div
       v-on-click-outside="closeShowError"
@@ -55,6 +54,6 @@ const closeShowError = () => {
     >
       Somthing went wrong, <span class="c-#67c23a cursor-pointer" @click.stop="debounceUploadToGit">Click me</span> to reupload!
     </div>
-    <icon-park-outline:link-cloud-faild v-if="!isUploadSuccess && uploadComplete" class="#F56C6C" />
+    <icon-park-outline:link-cloud-faild v-if="isShowFailMsg" class="#F56C6C" />
   </div>
 </template>

@@ -1,5 +1,5 @@
 import type { ILeetcodeInfo } from '~/Types/leetcode'
-
+export const MAX_INTERVAL_COUNT = 5
 export const SUBMISSION_DETAIL_PREFIX = '/submissions/detail/'
 export const LEETCODE_LANGUAGE = {
   'python': '.py',
