@@ -3,9 +3,11 @@ import 'uno.css'
 import { useDebounceFn, useDraggable } from '@vueuse/core'
 import { vOnClickOutside } from '@vueuse/components'
 import { useNotes } from '../../composables/useNotes'
+import { problemNotesInfoStorage } from '../../logic/storage'
 import { useSubmitStatus } from '~/composables/useSubmitStatus'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { useUploadToGit } from '~/composables/useUploadToGit'
+import { getEnProblemTtile } from '~/logic/leetcode'
 
 const { bottom, right } = getLeetcodeInfo()
 
@@ -35,7 +37,11 @@ const closeShowError = () => {
 
 const { notesInfo } = useNotes()
 watch(notesInfo, (newVal) => {
-  console.log(newVal)
+  // update or add notes
+  if (newVal) {
+    const enTitle = getEnProblemTtile()
+    problemNotesInfoStorage.value[enTitle] = newVal
+  }
 })
 </script>
 

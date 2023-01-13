@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { leetcodeAllOneCommitStorage, leetcodeProblemSha, leetcodeProblemSolved, problemBasicInfoStorage } from '../logic/storage'
+import { leetcodeAllOneCommitStorage, leetcodeProblemNotesSha, leetcodeProblemSha, leetcodeProblemSolved, problemBasicInfoStorage, problemNotesInfoStorage } from '../logic/storage'
 import type { IUploadSingleParam } from '../Types/github'
 import { useGithubReference } from './useGithubReference'
 import { useFileBlob } from './useFileBlob'
@@ -100,12 +100,17 @@ async function uploadToGitAllOne({
 }: IUploadCommon): Promise<boolean> {
   const { getBranchRef, updateBranchRef, isUploadSuccess } = useGithubReference()
   const { getFileBlob } = useFileBlob()
-  const [mainSha, codeBlobSha, mdBlobSha] = await Promise.all([
-    getBranchRef(),
-    getFileBlob({ content: code }),
-    getFileBlob({ content: markdown }),
-  ])
-  if (!mainSha || !mdBlobSha || !codeBlobSha)
+  const requestArr = [
+    getBranchRef,
+    () => getFileBlob({ content: code }),
+    () => getFileBlob({ content: markdown }),
+  ]
+  const notesInfo = problemNotesInfoStorage.value[enQTitle]
+  if (notesInfo)
+    requestArr.push(() => getFileBlob({ content: notesInfo }))
+
+  const [mainSha, codeBlobSha, mdBlobSha, notesBlobSha] = await Promise.all(requestArr.map(fn => fn()))
+  if (!mainSha || !mdBlobSha || !codeBlobSha || (notesInfo && !notesBlobSha))
     return false
   const tree: ITree[] = [
     {
@@ -121,6 +126,14 @@ async function uploadToGitAllOne({
       sha: mdBlobSha,
     },
   ]
+  if (notesInfo) {
+    tree.push({
+      path: `${directory}/NOTES.md`,
+      mode: '100644',
+      type: 'blob',
+      sha: notesBlobSha,
+    })
+  }
   const { treeSha, getGitTrees } = useGitTrees()
   await getGitTrees({
     tree,
@@ -140,15 +153,18 @@ async function uploadToGitAllOne({
     sha: commitSha.value,
   })
   if (isUploadSuccess.value)
-    updateShaAndSolved(codeBlobSha, enQTitle, lang)
+    updateShaAndSolved(codeBlobSha, enQTitle, lang, notesBlobSha)
 
   return isUploadSuccess.value
 }
 
-function updateShaAndSolved(sha: string, enTitle: string, ext: string) {
+function updateShaAndSolved(sha: string, enTitle: string, ext: string, notesSha?: string) {
   const difficult = problemBasicInfoStorage.value[enTitle].difficulty
   leetcodeProblemSolved.value[difficult]++
   leetcodeProblemSha.value[`${enTitle}${ext}`] = sha
+  problemNotesInfoStorage.value[enTitle] = ''
+  if (notesSha)
+    leetcodeProblemNotesSha.value[enTitle] = notesSha
 }
 
 async function uploadToGitSingle({

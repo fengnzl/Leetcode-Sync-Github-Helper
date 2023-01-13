@@ -4,6 +4,7 @@ import {
   IS_GENERATE_TOKEN,
   LEETCODE_ALL_ONE_COMMIT,
   LEETCODE_PROBLEM_DIFFICULT,
+  LEETCODE_PROBLEM_NOTES__SHA,
   LEETCODE_PROBLEM_SHA,
   LEETCODE_PROBLEM_SOLVED,
   LEETCODE_SYNC_TOKEN,
@@ -44,4 +45,13 @@ export const leetcodeAllOneCommitStorage = useStorageLocal<boolean>(LEETCODE_ALL
 
 export const problemBasicInfoStorage = useStorageLocal<
   Record<string, IProblemBasicInfo>
->(LEETCODE_PROBLEM_DIFFICULT, {})
+  >(LEETCODE_PROBLEM_DIFFICULT, {})
+
+export const problemNotesInfoStorage = useStorageLocal<
+    Record<string, string>
+  >(LEETCODE_PROBLEM_DIFFICULT, {})
+
+export const leetcodeProblemNotesSha = useStorageLocal<Record<string, string>>(
+  LEETCODE_PROBLEM_NOTES__SHA,
+  {},
+)

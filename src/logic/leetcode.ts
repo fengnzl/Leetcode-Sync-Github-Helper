@@ -59,7 +59,7 @@ export function leadingZero(str: string, count: number) {
   const len = str.length
   return len >= count ? str : '0'.repeat(count - len) + str
 }
-function getEnProblemTtile() {
+export function getEnProblemTtile() {
   return location.pathname.match(/\/problems\/([a-zA-Z-0-9]*)\//)![1]
 }
 export function getQuestionTitle(): IQuestionTitle {
