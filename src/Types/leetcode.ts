@@ -28,6 +28,7 @@ export interface ILeetcodeInfo {
   getProblemSolutionFn: (submissionId: number) => Record<string, any>
   passOldTableTdClass: string
   passNewTableTdClass: string
+  oldNotesSelector: string
 }
 
 export interface IPostConig<T> {

@@ -2,9 +2,11 @@
 import 'uno.css'
 import { useDebounceFn, useDraggable } from '@vueuse/core'
 import { vOnClickOutside } from '@vueuse/components'
+import { useNotes } from '../../composables/useNotes'
 import { useSubmitStatus } from '~/composables/useSubmitStatus'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { useUploadToGit } from '~/composables/useUploadToGit'
+
 const { bottom, right } = getLeetcodeInfo()
 
 const innerHeight = window.innerHeight
@@ -30,6 +32,11 @@ watch(isSubmitFinished, (newVal: boolean) => {
 const closeShowError = () => {
   isShowFailMsg.value = false
 }
+
+const { notesInfo } = useNotes()
+watch(notesInfo, (newVal) => {
+  console.log(newVal)
+})
 </script>
 
 <template>

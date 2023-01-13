@@ -40,6 +40,7 @@ const CN_LEETCODE_INFO: ILeetcodeInfo = {
   getProblemSolutionFn: getCnProblemSolution,
   passOldTableTdClass: '.custom-td__1SeH',
   passNewTableTdClass: 'span[class*=leading-]',
+  oldNotesSelector: '.note__1Qo7',
 }
 const EN_LEETCODE_INFO: ILeetcodeInfo = {
   bottom: 214,
@@ -59,6 +60,7 @@ const EN_LEETCODE_INFO: ILeetcodeInfo = {
   getProblemSolutionFn: getEnProblemSolution,
   passOldTableTdClass: '.lang-column__tR-8',
   passNewTableTdClass: 'span[class*=leading-]',
+  oldNotesSelector: '.note__1Qo7',
 }
 export function isLeetcodeCn() {
   return location.hostname === 'leetcode.cn'
