@@ -102,7 +102,7 @@ async function uploadToGitAllOne({
   const { getFileBlob } = useFileBlob()
   const requestArr = [
     getBranchRef,
-    () => getFileBlob({ content: code }),
+    () => getFileBlob({ content: code! }),
     () => getFileBlob({ content: markdown }),
   ]
   const notesInfo = problemNotesInfoStorage.value[enQTitle]
@@ -174,10 +174,60 @@ async function uploadToGitSingle({
   lang,
   directory,
 }: IUploadCommon): Promise<boolean> {
+  const requestArr = [
+    () =>
+      uploadCode({
+        enQTitle,
+        code,
+        msg,
+        lang,
+        directory,
+      } as IUploadCommon),
+  ]
+  if (problemNotesInfoStorage.value[enQTitle]) {
+    requestArr.push(() =>
+      uploadNotes({
+        enQTitle,
+        msg,
+        directory,
+      } as IUploadCommon),
+    )
+  }
+  const [uploadCodeSuccess, uploadNotesSuccess] = await Promise.all(requestArr.map(fn => fn()))
+
+  return uploadCodeSuccess && uploadNotesSuccess
+}
+
+async function uploadNotes({ enQTitle, msg, directory }: IUploadCommon): Promise<boolean> {
+  const sha = leetcodeProblemNotesSha.value[enQTitle] || ''
+  const notesInfo = problemNotesInfoStorage.value[enQTitle]
+  const params: IUploadSingleParam = {
+    sha,
+    content: Buffer.from(notesInfo, 'utf-8').toString('base64'),
+    message: msg,
+    path: `${directory}/NOTES.md`,
+  }
+  const { uploadSha, isUploadSuccess, uploadSingle } = useUploadSingle()
+  await uploadSingle(params)
+  if (isUploadSuccess.value) {
+    leetcodeProblemNotesSha.value[enQTitle] = uploadSha.value
+    problemNotesInfoStorage.value[enQTitle] = ''
+  }
+
+  return isUploadSuccess.value
+}
+
+async function uploadCode({
+  enQTitle,
+  code,
+  msg,
+  lang,
+  directory,
+}: IUploadCommon): Promise<boolean> {
   const sha = leetcodeProblemSha.value[`${enQTitle}${lang}`] || ''
   const params: IUploadSingleParam = {
     sha,
-    content: Buffer.from(code, 'utf-8').toString('base64'),
+    content: Buffer.from(code!, 'utf-8').toString('base64'),
     message: msg,
     path: `${directory}/${directory}${lang}`,
   }

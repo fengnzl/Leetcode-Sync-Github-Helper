@@ -95,7 +95,7 @@ export interface ICreateCommitRes {
 export interface IUploadCommon {
   enQTitle: string
   markdown: string
-  code: string
+  code?: string
   msg: string
   lang: string
   directory: string
