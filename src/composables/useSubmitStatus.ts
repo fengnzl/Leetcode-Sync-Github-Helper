@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { isNewUI } from '../config/leetcode'
+import { isLeetcodeCn, isNewUI } from '../config/leetcode'
 import { getLeetcodeInfo } from '~/config/leetcode'
 
 const { oldSubmitBtnSelector, newSubmitBtnSelector, rootSelectorId, newRootSelectorId } = getLeetcodeInfo()
@@ -64,7 +64,8 @@ export function getSubmitStatus(
   isSubmitFinished: Ref<boolean>,
 ) {
   const isNew = isNewUI()
-  const targetNode = isNew ? submitBtn : submitBtn.querySelector('span')!
+  const targetNode
+    = isNew || isLeetcodeCn() ? submitBtn : submitBtn.querySelector('span')!
   const mutationObserver = new MutationObserver(observeCb)
   const observeConfig: MutationObserverInit = {
     attributes: true,

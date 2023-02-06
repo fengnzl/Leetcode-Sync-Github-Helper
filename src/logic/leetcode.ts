@@ -22,11 +22,13 @@ function checkProblemPassedInOld(): Promise<boolean> {
       const successEle = document.querySelector(
         oldSuccessSelector,
       ) as HTMLElement | null
-      if (!successEle && count < MAX_INTERVAL_COUNT)
+      if (!successEle && count < MAX_INTERVAL_COUNT) {
         count++
-
-      else
-        resolve(successEle?.innerText.trim() === 'Success')
+      }
+      else {
+        const text = successEle?.innerText.trim()
+        resolve(text === 'Success' || text === '通过')
+      }
     }, 800)
   })
 }

@@ -42,7 +42,7 @@ const handleStarted = async () => {
     }
     btnLoading.value = true
     const { data, message, isSuccess, isFetching } = isAttatch
-      ? await useAttatchRepository(gihubUserNameStorage.value + repoName.value)
+      ? await useAttatchRepository(`${gihubUserNameStorage.value}/${repoName.value}`)
       : await useCreateRepository({
         name: repoName.value,
         private: pickOption.value === PickOptions.private,
@@ -75,8 +75,8 @@ const hasAttatched = computed(() => !!githubRepoNameStorage.value)
         <span v-if="errorMsg" class="flex ml-190px text-red text-16px" v-html="errorMsg" />
       </div>
       <div class="flex justify-end mr-200px mt-30px">
-        <el-button class="text-black" type="primary" :loading="btnLoading" @click="handleStarted">
-          Get Started
+        <el-button type="primary" :loading="btnLoading" @click="handleStarted">
+          <span class="text-black">Get Started</span>
         </el-button>
       </div>
     </template>
