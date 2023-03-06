@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'uno.css'
-import { gihubUserNameStorage, githubRepoNameStorage, leetcodeSyncToken } from '../logic/storage'
+import { clearStorage, gihubUserNameStorage, githubRepoNameStorage, leetcodeSyncToken } from '../logic/storage'
 import { useCreateRepository } from '~/composables/useCreateRepository'
 import { PickOptions } from '~/Types/options'
 import { useAttatchRepository } from '~/composables/useAttatchRepository'
@@ -59,7 +59,7 @@ const hasAttatched = computed(() => !!githubRepoNameStorage.value)
 
 <template>
   <main class="h-100vh px-4 py-10 text-center">
-    <img src="/assets/icon.svg" class="icon-btn mx-2 text-5xl" alt="extension icon">
+    <img src="/assets/icon.svg" class="icon-btn mx-2 text-5xl w40px h40px" alt="extension icon">
     <h2 class="to-light-600 font-700 text-size-30px">
       Leetcode Sync GitHub Helper
     </h2>
@@ -70,7 +70,7 @@ const hasAttatched = computed(() => !!githubRepoNameStorage.value)
           <el-select v-model="pickOption" class="m-2 w-300px" placeholder="Please select a option">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-          <el-input v-model="repoName" class="w-500px ml10px" placeholder="Repository name" />
+          <el-input v-model="repoName" style="width: 500px" class="ml10px" placeholder="Repository name" />
         </div>
         <span v-if="errorMsg" class="flex ml-190px text-red text-16px" v-html="errorMsg" />
       </div>
@@ -80,8 +80,14 @@ const hasAttatched = computed(() => !!githubRepoNameStorage.value)
         </el-button>
       </div>
     </template>
-    <div v-else>
-      <ProblemSolved count-size="24px" title-size="30px" />
+    <div v-else class="flex justify-around items-center mt100px">
+      <ProblemSolved count-size="26px" class="w450px" total-size="30px" />
+      <div class="text-size-20px">
+        Linked the wrong repo?
+        <el-button type="text" @click="clearStorage">
+          <span class="text-size-20px ml5">unlink</span>
+        </el-button>
+      </div>
     </div>
   </main>
   <div class="mb-4 text-center fixed bottom-10px left-50% translate-x--50%">

@@ -55,3 +55,20 @@ export const leetcodeProblemNotesSha = useStorageLocal<Record<string, string>>(
   LEETCODE_PROBLEM_NOTES__SHA,
   {},
 )
+
+export const clearStorage = () => {
+  leetcodeSyncToken.value = ''
+  gihubUserNameStorage.value = ''
+  githubRepoNameStorage.value = ''
+  generateToken.value = false
+  leetcodeSyncTokenType.value = ''
+  leetcodeProblemSolved.value = {
+    Easy: 0,
+    Medium: 0,
+    Hard: 0,
+  }
+  leetcodeProblemSha.value = {}
+  problemBasicInfoStorage.value = {}
+  problemNotesInfoStorage.value = {}
+  leetcodeProblemNotesSha.value = {}
+}
