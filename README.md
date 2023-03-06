@@ -33,7 +33,7 @@ pnpm start:firefox
 
 > While Vite handles HMR automatically in the most of the case, [Extensions Reloader](https://chrome.google.com/webstore/detail/fimgfedafeadlieiabdeeaodndnlbhid) is still recommanded for cleaner hard reloading.
 
-### Build
+### Local Use
 
 To build the extension, run
 

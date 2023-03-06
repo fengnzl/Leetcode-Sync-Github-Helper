@@ -41,16 +41,14 @@ export async function getManifest() {
       48: './assets/icon.png',
       128: './assets/icon.png',
     },
-    permissions: [
-      'tabs',
-      'storage',
-      'activeTab',
-      'notifications',
-    ],
+    permissions: ['tabs', 'storage', 'activeTab', 'notifications'],
     host_permissions: ['*://*/*'],
     content_scripts: [
       {
-        matches: ['https://leetcode.com/*', 'https://leetcode.cn/*'],
+        matches: [
+          'https://leetcode.com/problems/*',
+          'https://leetcode.cn/problems/*',
+        ],
         js: ['./dist/contentScripts/index.global.js'],
         run_at: 'document_idle',
       },

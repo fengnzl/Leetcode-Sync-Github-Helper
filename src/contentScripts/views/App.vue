@@ -58,12 +58,12 @@ watch(notesInfo, (newVal) => {
     <icon-park:source-code v-show="!isUploading && !uploadComplete" class="block m-auto text-white text-lg" />
     <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
     <div
+      v-show="isShowFailMsg"
       v-on-click-outside="closeShowError"
       class="absolute right-50px bg-#303133 c-#fff w-290px rd-4px cursor-default"
       p="x-4 y-2"
       m="y-auto r-2"
       transition="opacity duration-300"
-      :class="isShowFailMsg ? 'opacity-100' : 'opacity-0'"
     >
       Somthing went wrong, <span class="c-#67c23a cursor-pointer" @click.stop="debounceUploadToGit">Click me</span> to reupload!
     </div>
