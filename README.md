@@ -1,6 +1,6 @@
 # Leetcode Sync Github Helper
 
-A chrome extension powered by [vitesse-webext](https://github.com/antfu/vitesse-webext)，aims to automatically pushes you pass code to Github. Supported domain names includes [leetcode.com](https://leetcode.com/) and [leetcode.cn](https://leetcode.cn/)，both old and new ui versions are supported.
+A chrome extension powered by [vitesse-webext](https://github.com/antfu/vitesse-webext)，aims to automatically pushes your pass code to Github. Supported domain names includes [leetcode.com](https://leetcode.com/) and [leetcode.cn](https://leetcode.cn/)，both old and new ui versions are supported.
 
 The functionality is basically available and still to be improved. You can build an extension locally and upload it to chrome extensions to use.
 
@@ -43,4 +43,4 @@ To build the extension, run
 pnpm build
 ```
 
-And then pack files under `extension`, you can upload `extension.crx` or `extension.xpi` to appropriate extension store.
+And then pack files under `extension`, you can upload `extension` directory to appropriate extension store.
