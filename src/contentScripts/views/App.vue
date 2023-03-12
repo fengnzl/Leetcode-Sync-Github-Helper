@@ -55,7 +55,7 @@ watch(notesInfo, (newVal) => {
     :style="style"
   >
     <line-md:uploading-loop v-show="isUploading" class="text-24px c-#409eff" />
-    <icon-park:source-code v-show="!isUploading && !uploadComplete" class="block m-auto text-white text-lg" />
+    <icon-park:source-code v-show="!isUploading && !uploadComplete && !isShowFailMsg" class="block m-auto text-white text-lg" />
     <mdi:success-bold v-if="isUploadSuccess && uploadComplete" class="c-#67c23a text-24px" />
     <div
       v-show="isShowFailMsg"
