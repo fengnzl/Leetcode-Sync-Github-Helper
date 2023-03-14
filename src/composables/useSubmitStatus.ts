@@ -8,11 +8,11 @@ export function useSubmitStatus() {
   const submitBtnNode = ref<Element | null>(null)
   // add submit btn click listener
   const isSubmitFinished = ref<boolean>(false)
-  const submitStautsObserve = ref<MutationObserver | null>(null)
+  const submitStatusObserve = ref<MutationObserver | null>(null)
   getSubmitBtnNode(submitBtnNode)
   watch(submitBtnNode, (newNode) => {
     if (newNode) {
-      submitStautsObserve.value = getSubmitStatus(
+      submitStatusObserve.value = getSubmitStatus(
         submitBtnNode.value!,
         isSubmitFinished,
       )
@@ -23,7 +23,7 @@ export function useSubmitStatus() {
   }
 
   onUnmounted(() => {
-    submitStautsObserve.value?.disconnect()
+    submitStatusObserve.value?.disconnect()
   })
   return {
     isSubmitFinished,
@@ -56,7 +56,11 @@ function getSubmitNode(isNew: boolean): Element | null {
   const buttons = document.querySelectorAll(newSubmitBtnSelector)
   if (!buttons.length)
     return null
-  return Array.from(buttons).find(item => item.textContent === 'Submit') || null
+  return (
+    Array.from(buttons).find(
+      item => (item.textContent === 'Submit' || item.textContent === '提交'),
+    ) || null
+  )
 }
 
 export function getSubmitStatus(

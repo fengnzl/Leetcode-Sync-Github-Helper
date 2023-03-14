@@ -44,9 +44,8 @@ function checkProblemPassedInNew(): Promise<boolean> {
         count++
       }
       else {
-        resolve(
-          successEleArr[0]?.querySelector('span')?.innerText === 'Accepted',
-        )
+        const text = successEleArr[0]?.querySelector('span')?.innerText
+        resolve(text === 'Accepted' || text === '通过')
       }
     }, 800)
   })
@@ -61,7 +60,7 @@ export function leadingZero(str: string, count: number) {
   const len = str.length
   return len >= count ? str : '0'.repeat(count - len) + str
 }
-export function getEnProblemTtile() {
+export function getEnProblemTitle() {
   return location.pathname.match(/\/problems\/([a-zA-Z-0-9]*)\//)![1]
 }
 export function getQuestionTitle(): IQuestionTitle {
@@ -71,7 +70,7 @@ export function getQuestionTitle(): IQuestionTitle {
     ?.toLowerCase()
     .split('.') as string[]
   const title = questionTitle.trim().toLowerCase().replace(/\s+/g, '-')
-  const enQuestionTitle = getEnProblemTtile()
+  const enQuestionTitle = getEnProblemTitle()
   const leadingNum = leadingZero(questionNum, LEETCODE_LEADING_COUNT)
   return {
     questionNum: leadingNum,
@@ -82,7 +81,7 @@ export function getQuestionTitle(): IQuestionTitle {
 }
 
 export async function getProblemMd(): Promise<IProblemInfoParsed> {
-  const questionTitle = getEnProblemTtile()
+  const questionTitle = getEnProblemTitle()
   const { getProblemReadme, readme } = useProblemReadme()
   if (!problemBasicInfoStorage.value[questionTitle])
     await getProblemReadme(questionTitle)

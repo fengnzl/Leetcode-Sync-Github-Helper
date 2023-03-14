@@ -7,7 +7,7 @@ import { problemNotesInfoStorage } from '../../logic/storage'
 import { useSubmitStatus } from '~/composables/useSubmitStatus'
 import { getLeetcodeInfo } from '~/config/leetcode'
 import { useUploadToGit } from '~/composables/useUploadToGit'
-import { getEnProblemTtile } from '~/logic/leetcode'
+import { getEnProblemTitle } from '~/logic/leetcode'
 
 const { bottom, right } = getLeetcodeInfo()
 
@@ -39,7 +39,7 @@ const { notesInfo } = useNotes()
 watch(notesInfo, (newVal) => {
   // update or add notes
   if (newVal) {
-    const enTitle = getEnProblemTtile()
+    const enTitle = getEnProblemTitle()
     problemNotesInfoStorage.value[enTitle] = newVal
   }
 })
