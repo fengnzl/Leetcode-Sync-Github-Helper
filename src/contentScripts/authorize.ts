@@ -1,3 +1,4 @@
+import 'uno.css'
 import { sendMessage } from 'webext-bridge'
 import { watch } from 'vue'
 import { generateToken } from '../logic/storage'

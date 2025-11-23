@@ -1,4 +1,4 @@
-import { LEETCODE_LANGUAGE, MAX_INTERVAL_COUNT, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo, isNewUI } from '../config/leetcode'
+import { LEETCODE_LANGUAGE, MAX_INTERVAL_COUNT, SUBMISSION_DETAIL_PREFIX, getLeetcodeInfo } from '../config/leetcode'
 import type { IParsedSolution, IProblemBasicInfo, IProblemInfoParsed } from '../Types/leetcode'
 import { problemBasicInfoStorage } from './storage'
 import { ENDNOTE, LEETCODE_LEADING_COUNT } from '~/config'
@@ -6,45 +6,24 @@ import { useProblemReadme } from '~/composables/useProblemReadme'
 import type { IQuestionTitle, LeetcodeLanguageType } from '~/Types/leetcode'
 import { useProblemSolution } from '~/composables/useProblemSolution'
 const {
-  oldSuccessSelector,
   newSuccessSelector,
   passStatusSelector,
-  oldTitleSelector,
   newTitleSelector,
-  oldCodeSelector,
-  passOldTableTdClass,
   passNewTableTdClass,
 } = getLeetcodeInfo()
-function checkProblemPassedInOld(): Promise<boolean> {
-  return new Promise((resolve) => {
-    let count = 0
-    setInterval(() => {
-      const successEle = document.querySelector(
-        oldSuccessSelector,
-      ) as HTMLElement | null
-      if (!successEle && count < MAX_INTERVAL_COUNT) {
-        count++
-      }
-      else {
-        const text = successEle?.innerText.trim()
-        resolve(text === 'Success' || text === '通过')
-      }
-    }, 800)
-  })
-}
 
 function checkProblemPassedInNew(): Promise<boolean> {
   return new Promise((resolve) => {
     let count = 0
-    setInterval(() => {
-      const successEleArr = Array.from(
-        document.querySelectorAll(newSuccessSelector),
-      ).filter(elem => elem.querySelector('svg'))
-      if (!successEleArr[0] && count < MAX_INTERVAL_COUNT) {
+    const interval = setInterval(() => {
+      const resultEle = document.querySelector(newSuccessSelector) as HTMLElement
+
+      if (!resultEle && count < MAX_INTERVAL_COUNT) {
         count++
       }
       else {
-        const text = successEleArr[0]?.querySelector('span')?.innerText
+        clearInterval(interval)
+        const text = resultEle?.textContent?.trim()
         resolve(text === 'Accepted' || text === '通过')
       }
     }, 800)
@@ -53,7 +32,7 @@ function checkProblemPassedInNew(): Promise<boolean> {
 
 export const checkProblemPassed = async (): Promise<boolean> => {
   // The passing state is not real-time
-  return isNewUI() ? await checkProblemPassedInNew() : await checkProblemPassedInOld()
+  return await checkProblemPassedInNew()
 }
 
 export function leadingZero(str: string, count: number) {
@@ -64,7 +43,7 @@ export function getEnProblemTitle() {
   return location.pathname.match(/\/problems\/([a-zA-Z-0-9]*)\//)![1]
 }
 export function getQuestionTitle(): IQuestionTitle {
-  const titleSelector = isNewUI() ? newTitleSelector : oldTitleSelector
+  const titleSelector = newTitleSelector
   const titleEle = document.querySelector(titleSelector) as HTMLElement
   const [questionNum, questionTitle] = titleEle?.innerText
     ?.toLowerCase()
@@ -101,7 +80,7 @@ export const getTimeAndMemoryUsage: () => string = () => {
 }
 
 export async function getQuestionSolution(): Promise<IParsedSolution | null> {
-  return isNewUI() ? await getSolutionInNew() : await getSolutionInOld()
+  return await getSolutionInNew()
 }
 
 async function getSolutionInNew(): Promise<IParsedSolution | null> {
@@ -119,25 +98,8 @@ async function getSolutionInNew(): Promise<IParsedSolution | null> {
   }
 }
 
-async function getSolutionInOld(): Promise<IParsedSolution | null> {
-  const aEle = document.querySelector(oldCodeSelector) as HTMLAnchorElement
-  const href = aEle?.getAttribute('href')
-  if (!aEle || !href)
-    return null
-  const submissionId = href.slice(SUBMISSION_DETAIL_PREFIX.length, -1)
-  if (!submissionId)
-    return null
-  const { langExt, code, runtimeMemoryMsg, getSolution } = useProblemSolution()
-  await getSolution(Number(submissionId))
-  return {
-    langExt: langExt.value,
-    code: code.value,
-    runtimeMemoryMsg: runtimeMemoryMsg.value,
-  }
-}
-
 export function getLanguage(): string | null {
-  const tdClass = isNewUI() ? passNewTableTdClass : passOldTableTdClass
+  const tdClass = passNewTableTdClass
   const tdEle = document.querySelectorAll(tdClass)
   if (!tdEle?.length)
     return null

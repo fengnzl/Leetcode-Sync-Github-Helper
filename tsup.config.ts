@@ -4,7 +4,6 @@ import { isDev } from './scripts/utils'
 export default defineConfig(() => ({
   entry: {
     'background/index': './src/background/index.ts',
-    'contentScripts/authorize': './src/contentScripts/authorize.ts',
     ...(isDev ? { mv3client: './scripts/client.ts' } : {}),
   },
   outDir: 'extension/dist',

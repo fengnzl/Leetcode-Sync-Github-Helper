@@ -15,13 +15,14 @@ export default defineConfig({
     emptyOutDir: false,
     sourcemap: isDev ? 'inline' : false,
     lib: {
-      entry: r('src/contentScripts/index.ts'),
+      entry: r(`src/contentScripts/${process.env.TARGET}.ts`),
       name: packageJson.name,
       formats: ['iife'],
     },
     rollupOptions: {
       output: {
-        entryFileNames: 'index.global.js',
+        entryFileNames: `${process.env.TARGET}.global.js`,
+        assetFileNames: `${process.env.TARGET}.[ext]`,
         extend: true,
       },
     },

@@ -21,20 +21,19 @@ export const LEETCODE_LANGUAGE = {
   'ms sql server': '.sql',
   'oracle': '.sql',
 }
-const newRootSelectorId = '__next'
 const CN_LEETCODE_INFO: ILeetcodeInfo = {
   bottom: 214,
   right: 22,
   oldTitleSelector: 'div[data-cy="question-title"]',
   newTitleSelector: 'span[class*="text-label-1"]',
   oldSuccessSelector: 'div[data-cypress="SubmissionSuccess"]',
-  newSuccessSelector: '.text-green-s',
+  newSuccessSelector: '[data-e2e-locator="submission-result"]',
   oldSubmitBtnSelector: 'button[data-cypress="SubmitCode"]',
-  newSubmitBtnSelector: 'button[class*="text-label-"]',
+  newSubmitBtnSelector: 'button[data-e2e-locator="console-submit-button"]',
   passStatusSelector: 'data__HC-i',
   BASE_URL: 'https://leetcode.cn/graphql/',
   rootSelectorId: 'app',
-  newRootSelectorId,
+  newRootSelectorId: '__next',
   oldCodeSelector: '.custom-td__1SeH > .ac__g_mU',
   newCodeSelector: 'code',
   getProblemSolutionFn: getCnProblemSolution,
@@ -48,13 +47,13 @@ const EN_LEETCODE_INFO: ILeetcodeInfo = {
   oldTitleSelector: 'div[data-cy="question-title"]',
   newTitleSelector: 'span[class*="text-label-1"]',
   oldSuccessSelector: '.success__3Ai7',
-  newSuccessSelector: '.text-green-s',
+  newSuccessSelector: '[data-e2e-locator="submission-result"]',
   oldSubmitBtnSelector: 'button[data-cy="submit-code-btn"]',
   newSubmitBtnSelector: 'button[class*="text-label-"]',
   passStatusSelector: 'data__HC-i',
   BASE_URL: 'https://leetcode.com/graphql/',
   rootSelectorId: 'app',
-  newRootSelectorId,
+  newRootSelectorId: '__next',
   oldCodeSelector: '.status-column__3SUg > .ac__35gz',
   newCodeSelector: 'code',
   getProblemSolutionFn: getEnProblemSolution,
@@ -64,9 +63,6 @@ const EN_LEETCODE_INFO: ILeetcodeInfo = {
 }
 export function isLeetcodeCn() {
   return location.hostname === 'leetcode.cn'
-}
-export function isNewUI() {
-  return !!document.getElementById(newRootSelectorId)
 }
 export function getLeetcodeInfo(): ILeetcodeInfo {
   return isLeetcodeCn() ? CN_LEETCODE_INFO : EN_LEETCODE_INFO

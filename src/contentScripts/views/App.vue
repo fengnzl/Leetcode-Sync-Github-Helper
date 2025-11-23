@@ -25,8 +25,19 @@ const { style } = useDraggable(draggableContainer, {
 const { isSubmitFinished, changeSubmitStatus } = useSubmitStatus()
 const { uploadToGit, isUploading, isUploadSuccess, uploadComplete, isShowFailMsg } = useUploadToGit()
 const debounceUploadToGit = useDebounceFn(() => uploadToGit(true), 300)
+
+// Handle immediate click (for user feedback)
+// watch(isSubmitClicked, (newVal: boolean) => {
+//   if (newVal) {
+    // console.log('🚀 Submit clicked - waiting for completion...')
+    // You can add immediate UI feedback here if needed
+//   }
+// })
+
+// Handle submission completion (for actual upload)
 watch(isSubmitFinished, (newVal: boolean) => {
   if (newVal) {
+    console.log('✅ Submit finished - starting upload...')
     changeSubmitStatus(false)
     uploadToGit()
   }

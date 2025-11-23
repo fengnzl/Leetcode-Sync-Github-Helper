@@ -13,6 +13,10 @@ interface WebExtensionManifest extends Manifest.WebExtensionManifest {
   declarative_net_request?: {
     rule_resources: IRuleResourceType[]
   }
+  background?: {
+    service_worker: string
+    type?: 'module'
+  }
 }
 export async function getManifest() {
   const pkg = (await fs.readJSON(r('package.json'))) as typeof PkgType
@@ -34,7 +38,8 @@ export async function getManifest() {
       open_in_tab: true,
     },
     background: {
-      service_worker: './dist/background/index.mjs',
+      service_worker: './dist/background/index.js',
+      type: 'module',
     },
     icons: {
       16: './assets/icon.png',
@@ -54,13 +59,13 @@ export async function getManifest() {
       },
       {
         matches: ['https://github.com/*'],
-        js: ['./dist/contentScripts/authorize.mjs'],
+        js: ['./dist/contentScripts/authorize.global.js'],
         run_at: 'document_idle',
       },
     ],
     web_accessible_resources: [
       {
-        resources: ['dist/contentScripts/style.css'],
+        resources: ['dist/contentScripts/index.css', 'dist/contentScripts/authorize.css'],
         matches: ['<all_urls>'],
       },
     ],

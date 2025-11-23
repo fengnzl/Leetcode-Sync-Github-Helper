@@ -22,7 +22,7 @@ export interface ILeetcodeInfo {
   passStatusSelector: string
   BASE_URL: string
   rootSelectorId: 'app'
-  newRootSelectorId: '__next'
+  newRootSelectorId: '__next',
   oldCodeSelector: string
   newCodeSelector: string
   getProblemSolutionFn: (submissionId: number) => Record<string, any>

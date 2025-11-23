@@ -55,7 +55,6 @@ export const useUploadToGit = () => {
     const { markdown, enQTitle, fullTitle } = mdInfo
     const { code, langExt, runtimeMemoryMsg } = codeInfo
     isUploading.value = true
-    // firstUpload
     if (
       !leetcodeProblemSha.value[`${enQTitle}${langExt}`]
       && leetcodeAllOneCommitStorage.value
@@ -224,6 +223,7 @@ async function uploadCode({
   lang,
   directory,
 }: IUploadCommon): Promise<boolean> {
+  console.log('uploadCode')
   const sha = leetcodeProblemSha.value[`${enQTitle}${lang}`] || ''
   const params: IUploadSingleParam = {
     sha,

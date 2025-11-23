@@ -1,8 +1,7 @@
 import type { Ref } from 'vue'
-import { isNewUI } from '../config/leetcode'
 import { getLeetcodeInfo } from '~/config/leetcode'
 
-const { oldNotesSelector, rootSelectorId, newRootSelectorId }
+const { newRootSelectorId }
   = getLeetcodeInfo()
 export function useNotes() {
   // get notes wrapper
@@ -29,8 +28,7 @@ export function useNotes() {
 }
 
 export function getNotesWrapperNode(notesWrapperNode: Ref<Element | null>) {
-  const isNew = isNewUI()
-  const rootSelector = isNew ? newRootSelectorId : rootSelectorId
+  const rootSelector = newRootSelectorId
 
   const app = document.getElementById(rootSelector)
   const mutationObserver = new MutationObserver(observeCb)
@@ -39,22 +37,19 @@ export function getNotesWrapperNode(notesWrapperNode: Ref<Element | null>) {
     subtree: true,
   }
   function observeCb() {
-    notesWrapperNode.value = getWrapperNode(isNew)
+    notesWrapperNode.value = getWrapperNode()
     if (notesWrapperNode.value)
       mutationObserver.disconnect()
   }
   mutationObserver.observe(app!, observeConfig)
 }
 
-function getWrapperNode(isNew: boolean): Element | null {
-  if (!isNew)
-    return document.querySelector<Element>(oldNotesSelector)
+function getWrapperNode(): Element | null {
   return null
 }
 
 export function getChangedNotes(notesWrapperNode: Element, notesInfo: Ref<string>) {
-  const isNew = isNewUI()
-  const targetNode = isNew ? notesWrapperNode : notesWrapperNode
+  const targetNode = notesWrapperNode
   const mutationObserver = new MutationObserver(observeCb)
   const observeConfig: MutationObserverInit = {
     attributes: true,
@@ -63,41 +58,7 @@ export function getChangedNotes(notesWrapperNode: Element, notesInfo: Ref<string
     attributeFilter: ['status'],
   }
   function observeCb(mutations: MutationRecord[]) {
-    const { oldValue } = mutations[0]
-    if (isNew) {
-      // TODO
-    }
-    else {
-      // entered -> existed
-      if (oldValue === 'entered')
-        notesInfo.value = getNotesInfo(targetNode)
-    }
   }
   mutationObserver.observe(targetNode, observeConfig)
   return mutationObserver
-}
-
-function getNotesInfo(targetNode: Element): string {
-  return isNewUI() ? ' ' : getNotesInfoInOld(targetNode)
-}
-
-function getNotesInfoInOld(targetNode: Element): string {
-  const notesDiv = targetNode
-    .querySelector('.notewrap__eHkN')
-    ?.querySelector('.CodeMirror-code')
-  if (notesDiv) {
-    return Array.from(notesDiv.childNodes).reduce((prev, cur) => {
-      if (cur.childNodes.length === 0) {
-        return prev
-      }
-      else {
-        const notes = (cur.childNodes[0] as HTMLElement).innerText
-        prev += `\n${notes.trim()}`
-        return prev
-      }
-    }, '').trim()
-  }
-  else {
-    return ''
-  }
 }
